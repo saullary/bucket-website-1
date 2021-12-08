@@ -50,6 +50,16 @@
         </v-btn>
       </div>
     </div>
+
+    <div class="pos-btm">
+      <a href="/" class="d-flex al-c pa-2 ml-4 mb-4 hover-1">
+        <v-avatar color="indigo" size="30">
+          <v-icon dark> mdi-account </v-icon>
+        </v-avatar>
+        <span class="ml-3 gray-3">username</span>
+        <v-icon class="ml-auto" color="#aaa">mdi-chevron-right</v-icon>
+      </a>
+    </div>
   </v-navigation-drawer>
 </template>
 
