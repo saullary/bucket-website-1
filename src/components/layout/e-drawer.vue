@@ -26,8 +26,30 @@
         value="15"
         class="mt-3"
       ></v-progress-linear>
+      <div class="mt-3">
+        <b class="fz-18">20</b>
+        <span class="gray fz-14"> / 1024MB used</span>
+      </div>
     </div>
+
     <v-divider></v-divider>
+
+    <div class="pa-8">
+      <div class="mb-4" v-for="(it, i) in list" :key="i">
+        <v-btn
+          class="menu-btn"
+          rounded
+          plain
+          block
+          :to="it.to"
+          :href="it.href"
+          :target="it.href ? '_blank' : ''"
+        >
+          <v-icon size="16">mdi-{{ it.icon }}</v-icon>
+          <span class="ml-1" style="min-width: 65px">{{ it.label }}</span>
+        </v-btn>
+      </div>
+    </div>
   </v-navigation-drawer>
 </template>
 
@@ -50,6 +72,28 @@ export default {
   data() {
     return {
       drawer: null,
+      list: [
+        {
+          label: "Files",
+          to: "/",
+          icon: "file-multiple",
+        },
+        {
+          label: "Domain",
+          to: "/domain",
+          icon: "wan",
+        },
+        {
+          label: "Billing",
+          to: "/billing",
+          icon: "credit-card-outline",
+        },
+        {
+          label: "Docs",
+          href: "https://bucket-docs.4everland.org",
+          icon: "file-document-outline",
+        },
+      ],
     };
   },
 };

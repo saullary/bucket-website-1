@@ -60,6 +60,11 @@ body {
   .theme--light.v-btn {
     color: #7E8EA8;
   }
+  .menu-btn.v-btn--active {
+    background: #fff;
+    color: $color1;
+    font-weight: bold;
+  }
 }
 .color-1 {
   color: $color1;
