@@ -5,13 +5,17 @@
 @import 'color';
 @import 'anim';
 
-$color1: #4A96FA;
+$color1: #0F8DFF;
+@font-face {
+  font-family: Poppins;
+  src: url('/font/Poppins-Medium.ttf');
+}
 body {
   box-sizing: border-box;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   .v-application {
-    font-family: Arial,"PingFang SC",Roboto,"Helvetica Neue","Helvetica, Tahoma","PingFang SC-Light","Microsoft YaHei";
+    font-family: Poppins, Arial,"PingFang SC",Roboto,"Helvetica Neue","Helvetica, Tahoma","PingFang SC-Light","Microsoft YaHei";
     .primary {
       background-color: $color1 !important;
       border-color: $color1 !important;
@@ -44,11 +48,17 @@ body {
     background: #ECF4FF;
     pointer-events: none;
   }
-  thead.v-data-table-header {
-    background: #f0f0f0;
+  .theme--light.v-data-table {
+    background: transparent;
   }
   .v-input--is-disabled:not(.v-input--is-readonly) {
     pointer-events: all;
+  }
+  .v-btn, .v-tab {
+    text-transform: none;
+  }
+  .theme--light.v-btn {
+    color: #7E8EA8;
   }
 }
 .color-1 {
@@ -58,9 +68,7 @@ body {
 .v-main {
   background: #F4F9FF;
 }
-.v-btn, .v-tab {
-  text-transform: none;
-}
+
 .v-dialog .v-label {
   font-size: 18px;
   &.error--text {

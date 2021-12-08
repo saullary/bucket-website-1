@@ -10,9 +10,24 @@
 
 <template>
   <v-navigation-drawer class="e-header" v-model="drawer" app>
-    <div>
-      <img src="img/logo.svg" height="30" />
+    <div class="pt-10 pb-3 ta-c">
+      <a href="/">
+        <img src="img/logo.svg" height="28" />
+      </a>
     </div>
+    <div class="pa-8">
+      <div>
+        <v-icon color="#D1DCFC" size="16">mdi-cloud</v-icon>
+        <span class="gray fz-14 ml-2">Storage Capacity</span>
+      </div>
+      <v-progress-linear
+        rounded
+        height="6"
+        value="15"
+        class="mt-3"
+      ></v-progress-linear>
+    </div>
+    <v-divider></v-divider>
   </v-navigation-drawer>
 </template>
 
@@ -24,9 +39,6 @@ export default {
     ...mapState({
       noticeMsg: (s) => s.noticeMsg,
     }),
-    asMobile() {
-      return this.$vuetify.breakpoint.smAndDown;
-    },
   },
   watch: {
     noticeMsg({ name }) {
@@ -37,7 +49,7 @@ export default {
   },
   data() {
     return {
-      drawer: false,
+      drawer: null,
     };
   },
 };
