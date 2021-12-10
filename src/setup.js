@@ -7,6 +7,8 @@ import router from "./router";
 
 Vue.use(VueClipboards);
 
+Vue.prototype.$color1 = "#0F8DFF";
+
 Vue.prototype.$inDev = /xyz/.test(process.env.VUE_APP_BASE_URL);
 
 Vue.prototype.$sleep = (msec = 300) => {

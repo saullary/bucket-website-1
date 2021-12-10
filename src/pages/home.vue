@@ -12,7 +12,11 @@
     </div>
 
     <div class="mt-5">
-      <v-data-table :headers="headers" :items="list"></v-data-table>
+      <v-data-table
+        :headers="headers"
+        :items="list"
+        hide-default-footer
+      ></v-data-table>
     </div>
   </div>
 </template>

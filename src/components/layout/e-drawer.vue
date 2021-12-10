@@ -1,5 +1,5 @@
 <style lang="scss">
-.e-header {
+.e-drawer {
   background: linear-gradient(160deg, #ffffff 0%, #d7e9ff 50%, #fff1fe 100%);
   box-shadow: 5px 0px 30px 0px rgba(0, 0, 0, 0.1);
   .v-navigation-drawer__border {
@@ -9,7 +9,7 @@
 </style>
 
 <template>
-  <v-navigation-drawer class="e-header" v-model="drawer" app>
+  <v-navigation-drawer class="e-drawer" v-model="drawer" app>
     <div class="pt-10 pb-3 ta-c">
       <a href="/">
         <img src="img/logo.svg" height="28" />
@@ -97,6 +97,11 @@ export default {
           label: "Billing",
           to: "/billing",
           icon: "credit-card-outline",
+        },
+        {
+          label: "Settings",
+          to: "/settings",
+          icon: "cog-outline",
         },
         {
           label: "Docs",
