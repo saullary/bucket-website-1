@@ -66,26 +66,24 @@
 <script>
 import { mapState } from "vuex";
 
+const filesPath = "/storage/";
+
 export default {
+  data() {
+    return {
+      drawer: null,
+      filesPath,
+    };
+  },
   computed: {
     ...mapState({
       noticeMsg: (s) => s.noticeMsg,
     }),
-  },
-  watch: {
-    noticeMsg({ name }) {
-      if (name == "showDrawer") {
-        this.drawer = true;
-      }
-    },
-  },
-  data() {
-    return {
-      drawer: null,
-      list: [
+    list() {
+      return [
         {
           label: "Files",
-          to: "/",
+          to: this.filesPath,
           icon: "file-multiple",
         },
         {
@@ -108,8 +106,20 @@ export default {
           href: "https://bucket-docs.4everland.org",
           icon: "file-document-outline",
         },
-      ],
-    };
+      ];
+    },
+  },
+  watch: {
+    noticeMsg({ name }) {
+      if (name == "showDrawer") {
+        this.drawer = true;
+      }
+    },
+    "$route.path"(val) {
+      if (val.includes(filesPath)) {
+        this.filesPath = val;
+      }
+    },
   },
 };
 </script>

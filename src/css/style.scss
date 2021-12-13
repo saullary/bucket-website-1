@@ -65,6 +65,9 @@ body {
     color: $color1;
     font-weight: bold;
   }
+  thead.v-data-table-header tr span {
+    color: #7E8EA8;
+  }
 }
 .color-1 {
   color: $color1;

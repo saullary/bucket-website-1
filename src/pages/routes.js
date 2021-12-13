@@ -9,6 +9,10 @@ export default [
     component: Home,
   },
   {
+    path: "/storage/*",
+    component: Home,
+  },
+  {
     path: "/domain",
     component: Domain,
     meta: {
