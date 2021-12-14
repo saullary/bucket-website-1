@@ -6,7 +6,7 @@ import Settings from "./settings";
 export default [
   {
     path: "/",
-    component: Home,
+    redirect: "/storage/",
   },
   {
     path: "/storage/*",

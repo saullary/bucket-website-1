@@ -4,7 +4,7 @@
       <template v-if="inBucket">
         <v-btn color="primary">
           <v-icon size="15">mdi-folder-plus</v-icon>
-          <span class="ml-1">Create Bucket</span>
+          <span class="ml-1">New Bucket</span>
         </v-btn>
       </template>
       <template v-else-if="isFile">
