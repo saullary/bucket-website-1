@@ -140,15 +140,16 @@ export default {
             createAt: "2021-12-13",
           },
         ];
+      const tmp = this.path.split("/").length - 2;
       if (!this.isFile)
         return [
           {
-            name: "test-folder" + (this.path.split("/").length - 2),
+            name: "test-folder" + tmp,
             size: "-",
             hash: "-",
           },
           {
-            name: "test.png" + (this.path.split("/").length - 2),
+            name: `test${tmp}.png`,
             size: "100k",
             hash: "asdf",
           },
