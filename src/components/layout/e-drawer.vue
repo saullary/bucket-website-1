@@ -66,24 +66,27 @@
 <script>
 import { mapState } from "vuex";
 
-const filesPath = "/storage/";
+const initFilePath = "/storage/";
 
 export default {
   data() {
     return {
       drawer: null,
-      filesPath,
+      filesPath: initFilePath,
     };
   },
   computed: {
     ...mapState({
       noticeMsg: (s) => s.noticeMsg,
     }),
+    path() {
+      return this.$route.path;
+    },
     list() {
       return [
         {
           label: "Files",
-          to: this.filesPath,
+          to: this.path.includes(initFilePath) ? initFilePath : this.filesPath,
           icon: "file-multiple",
         },
         {
@@ -115,8 +118,8 @@ export default {
         this.drawer = true;
       }
     },
-    "$route.path"(val) {
-      if (val.includes(filesPath)) {
+    path(val) {
+      if (val.includes(initFilePath)) {
         this.filesPath = val;
       }
     },
