@@ -3,7 +3,7 @@
     <e-hcon>
       <template v-if="inBucket">
         <v-btn color="primary">
-          <v-icon size="15">mdi-folder-plus</v-icon>
+          <v-icon size="15">mdi-folder-multiple-plus</v-icon>
           <span class="ml-1">New Bucket</span>
         </v-btn>
       </template>
@@ -50,12 +50,16 @@
       <v-data-table :headers="headers" :items="list" hide-default-footer>
         <template v-slot:item.name="{ item }">
           <v-btn
-            color="primary"
+            :color="inBucket ? 'primary' : '#000'"
             rounded
-            :plain="/\./.test(item.name)"
+            text
             small
             :to="path + (inBucket ? '' : '/') + item.name"
-            >{{ item.name }}</v-btn
+          >
+            <v-icon v-if="!/\./.test(item.name)" size="18" class="mr-2"
+              >mdi-{{ inBucket ? "folder-multiple" : "folder" }}</v-icon
+            >
+            <b>{{ item.name }}</b></v-btn
           >
         </template>
       </v-data-table>
@@ -79,6 +83,9 @@ export default {
     },
     isFile() {
       return /\./.test(this.path);
+    },
+    isFolder() {
+      return !this.inBucket && !this.isFile;
     },
     fileName() {
       const arr = this.path.split("/");
