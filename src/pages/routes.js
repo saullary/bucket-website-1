@@ -1,4 +1,4 @@
-import Home from "./home";
+import Storage from "./storage";
 import Domain from "./domain";
 import Billing from "./billing";
 import Settings from "./settings";
@@ -10,7 +10,7 @@ export default [
   },
   {
     path: "/storage/*",
-    component: Home,
+    component: Storage,
   },
   {
     path: "/domain",
