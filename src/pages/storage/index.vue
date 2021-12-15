@@ -2,7 +2,7 @@
   <div>
     <e-hcon>
       <template v-if="inBucket">
-        <v-btn color="primary">
+        <v-btn color="primary" @click="addBucket">
           <v-icon size="15">mdi-folder-multiple-plus</v-icon>
           <span class="ml-1">New Bucket</span>
         </v-btn>
@@ -68,99 +68,58 @@
 </template>
 
 <script>
+import mixin from "./mixin";
+
 export default {
+  mixins: [mixin],
   data() {
     return {
-      // isFile: false,
+      bucketList: [
+        {
+          name: "test-bucket1",
+          domain: "test.com",
+          createAt: "2021-12-13",
+        },
+        {
+          name: "test-bucket2",
+          domain: "test.com",
+          createAt: "2021-12-13",
+        },
+      ],
     };
   },
-  computed: {
-    path() {
-      return this.$route.path;
-    },
-    inBucket() {
-      return this.path == "/storage/";
-    },
-    isFile() {
-      return /\./.test(this.path);
-    },
-    isFolder() {
-      return !this.inBucket && !this.isFile;
-    },
-    fileName() {
-      const arr = this.path.split("/");
-      return arr[arr.length - 1];
-    },
-    navItems() {
-      let to = "/storage/";
-      const items = [
-        {
-          text: "Storage",
-          to,
-          exact: true,
-        },
-      ];
-      const arr = this.path.replace(to, "").split("/");
-      for (const text of arr) {
-        to += text;
-        items.push({
-          text,
-          to,
-          exact: true,
+  methods: {
+    async addBucket() {
+      try {
+        const { value: name } = await this.$prompt("", "New Bucket", {
+          icon: "mdi-folder-multiple-plus",
+          inputAttrs: {
+            label: "Bucket Name",
+            // placeholder: "",
+            counter: true,
+            maxlength: 60,
+            trim: true,
+            rules: [
+              (v) => !!v || "Invalid Name",
+              (v) =>
+                /^[a-z\d-]+$/.test(v) ||
+                "Only lowercase letters(a-z), numbers and dash(-) are allowed",
+              (v) => !/^-/.test(v) || "To beigin with dash(-) is not allowed",
+              (v) =>
+                !/--/.test(v) || "Continuous use of dash(-) is not allowed",
+              (v) => !/-$/.test(v) || "To end with dash(-) is not allowed",
+            ],
+            required: true,
+          },
         });
-        to += "/";
+        this.bucketList.push({
+          name,
+          domain: "-",
+          createAt: new Date().format(),
+        });
+      } catch (error) {
+        console.log(error);
       }
-      return items;
-    },
-    headers() {
-      if (this.inBucket)
-        return [
-          { text: "Bucket Name", value: "name" },
-          { text: "Domain", value: "domain" },
-          { text: "CreateAt", value: "createAt" },
-        ];
-      return [
-        { text: "Name", value: "name" },
-        { text: "Size", value: "size" },
-        { text: "IPFS Hash", value: "hash" },
-        { text: "Last Modified", value: "updateAt" },
-      ];
-    },
-    list() {
-      if (this.inBucket)
-        return [
-          {
-            name: "test-bucket1",
-            domain: "test.com",
-            createAt: "2021-12-13",
-          },
-          {
-            name: "test-bucket2",
-            domain: "test.com",
-            createAt: "2021-12-13",
-          },
-        ];
-      const tmp = this.path.split("/").length - 2;
-      if (!this.isFile)
-        return [
-          {
-            name: "test-folder" + tmp,
-            size: "-",
-            hash: "-",
-          },
-          {
-            name: `test${tmp}.png`,
-            size: "100k",
-            hash: "asdf",
-          },
-        ];
-      return [];
-    },
-  },
-  watch: {
-    path(val) {
-      console.log(val);
-      // this.isFile = /\./.test(val);
     },
   },
 };
