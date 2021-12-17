@@ -1,65 +1,52 @@
 <style lang="scss">
 .e-upload {
-  .item {
-    width: 150px;
-    height: 95px;
-    border-radius: 5px;
-    margin-right: 15px;
-    margin-bottom: 15px;
-  }
+  margin: 20px 0 30px;
   .add-img {
-    border: 1px solid rgba(0, 0, 0, 0.4);
-    &:hover {
-      border-color: rgba(0, 0, 0, 0.6);
-    }
-    &:active {
-      border: 2px solid #2278cf;
-    }
-  }
-}
-@media screen and (max-width: 700px) {
-  .e-upload {
-    .item {
-      width: 110px;
-      height: 90px;
-    }
+    padding: 40px 0;
+    border: 3px dashed #ddd;
   }
 }
 </style>
 
 <template>
-  <div class="d-flex al-start">
-    <v-icon class="mr-2 mt-5">mdi-image</v-icon>
-    <div>
-      <div class="d-flex flex-wrap e-upload">
-        <div class="bd-1 item pd-10 pos-r" v-for="(it, i) in imgList" :key="i">
-          <img :src="it.src" class="wh100p img-contain" />
-          <v-btn
-            @click="onDel(i)"
-            fab
-            x-small
-            color="error"
-            class="pos-a"
-            style="right: -5px; top: -5px"
-          >
-            <v-icon>mdi-delete-outline</v-icon>
+  <div>
+    <div class="e-upload">
+      <v-data-table
+        v-show="files.length > 0"
+        class="elevation-1"
+        :headers="headers"
+        :items="list"
+        hide-default-footer
+      >
+        <template v-slot:item.action="{ item }">
+          <v-btn icon @click="onDel(item.index)">
+            <v-icon size="18">mdi-trash-can-outline</v-icon>
           </v-btn>
+        </template>
+      </v-data-table>
+
+      <div class="add-img pos-r bdrs-10" v-ripple v-show="files.length == 0">
+        <div class="ta-c">
+          <p>
+            <v-icon size="60" color="#bbb">mdi-cloud-upload-outline</v-icon>
+          </p>
         </div>
-        <div class="item add-img pos-r" v-if="files.length < limit">
-          <v-icon size="30" class="pos-center">mdi-plus-thick</v-icon>
-          <input
-            ref="file"
-            multiple
-            type="file"
-            :accept="accept"
-            class="pos-mask op-0"
-            @input="onInput"
-          />
-        </div>
+        <input
+          ref="file"
+          multiple
+          type="file"
+          :accept="accept"
+          class="pos-mask op-0 z--1"
+          @input="onInput"
+        />
       </div>
-      <div class="gray-6 fz-13">
-        You can attach {{ limit }} images at maximum
-      </div>
+      <p class="ta-c mt-5">
+        <v-btn text @click="onClick">
+          <span class="gray">
+            Drag, Paste or <span class="color-1">click to upload files</span>
+          </span>
+        </v-btn>
+      </p>
     </div>
   </div>
 </template>
@@ -69,25 +56,52 @@ export default {
   props: {
     accept: {
       type: String,
-      default: "image/*",
+      default: "*", //image/*
     },
     limit: {
       type: Number,
-      default: 3,
+      default: 5,
     },
     value: Array,
   },
   data() {
     return {
       files: [],
-      imgList: [],
+      headers: [
+        {
+          text: "Name",
+          value: "name",
+        },
+        {
+          text: "Size",
+          value: "size",
+        },
+        {
+          text: "Action",
+          value: "action",
+        },
+      ],
     };
+  },
+  computed: {
+    list() {
+      const mb = Math.pow(1024, 2);
+      return this.files.map((it, index) => {
+        let size = it.size + " B";
+        if (it.size > mb) size = (it.size / mb).toFixed(2) + " MB";
+        else if (it.size > 1024) size = (it.size / 1024).toFixed(2) + " KB";
+        return {
+          name: it.name,
+          size,
+          index,
+        };
+      });
+    },
   },
   watch: {
     value(val) {
       if (!val || val.length == 0) {
         this.files = [];
-        this.imgList = [];
       }
     },
   },
@@ -102,45 +116,49 @@ export default {
     };
   },
   methods: {
-    onDel(i) {
-      this.imgList.splice(i, 1);
-      this.files.splice(i, 1);
-    },
     onInput(e) {
       this.getFiles(e.target);
       this.$refs.file.value = null;
+    },
+    onClick() {
+      this.$refs.file.click();
     },
     getFiles(data) {
       if (!data) return;
       const { files = [] } = data;
       for (const file of files) {
         if (this.limit && this.files.length >= this.limit) break;
-        if (!/image/.test(file.type)) continue;
-        if (file.size > Math.pow(1024, 2) * 10) {
-          this.$toast(`${file.name} is too larg (over 10MB)`);
+        // if (!/image/.test(file.type)) continue;
+        if (file.size > Math.pow(1024, 2) * 30) {
+          this.$toast(`${file.name} is too larg (over 30MB)`);
           continue;
         }
+        const isRepeat =
+          this.files.filter((it) => {
+            return (
+              it.name == file.name &&
+              it.size == file.size &&
+              it.lastModified == file.lastModified
+            );
+          }).length > 0;
+        if (isRepeat) continue;
         this.files.push(file);
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (e) => {
-          this.imgList.push({
-            src: e.target.result,
-            size: file.size,
-          });
-        };
       }
       if (this.files.length) {
         this.$setState({
           noticeMsg: {
-            name: "feedback",
-            data: {
-              label: "Report",
-            },
+            name: "file-upload",
           },
         });
       }
+      this.emitInput();
+    },
+    emitInput() {
       this.$emit("input", this.files);
+    },
+    onDel(i) {
+      this.files.splice(i, 1);
+      this.emitInput();
     },
   },
 };

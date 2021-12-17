@@ -4,7 +4,9 @@
     <v-main>
       <e-header />
       <e-wrap>
-        <router-view></router-view>
+        <keep-alive>
+          <router-view></router-view>
+        </keep-alive>
       </e-wrap>
     </v-main>
 

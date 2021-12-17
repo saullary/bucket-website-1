@@ -1,5 +1,7 @@
 <template>
   <div>
+    <storage-upload ref="upload"></storage-upload>
+
     <e-hcon>
       <template v-if="inBucket">
         <v-btn color="primary" @click="addBucket">
@@ -14,11 +16,11 @@
         </v-btn>
       </template>
       <template v-else>
-        <v-btn color="primary">
+        <v-btn color="primary" @click="$refs.upload.showPop = true">
           <v-icon size="15">mdi-cloud-upload</v-icon>
           <span class="ml-1">Upload</span>
         </v-btn>
-        <v-btn class="ml-5" outlined>
+        <v-btn class="ml-5" outlined @click="addFolder">
           <v-icon size="15">mdi-folder-plus-outline</v-icon>
           <span class="ml-1">New Folder</span>
         </v-btn>
@@ -74,6 +76,7 @@ export default {
   mixins: [mixin],
   data() {
     return {
+      popUpload: false,
       bucketList: [
         {
           name: "test-bucket1",
@@ -89,6 +92,30 @@ export default {
     };
   },
   methods: {
+    async addFolder() {
+      try {
+        const { value: name } = await this.$prompt("", "New Folder", {
+          icon: "mdi-folder-plus",
+          inputAttrs: {
+            label: "Folder Name",
+            // placeholder: "",
+            counter: true,
+            maxlength: 60,
+            trim: true,
+            rules: [
+              (v) => !!v || "Invalid Name",
+              (v) =>
+                /^[a-z\d-]+$/.test(v) ||
+                "Only lowercase letters(a-z), numbers and dash(-) are allowed",
+            ],
+            required: true,
+          },
+        });
+        this.$toast(name);
+      } catch (error) {
+        console.log(error);
+      }
+    },
     async addBucket() {
       try {
         const { value: name } = await this.$prompt("", "New Bucket", {
