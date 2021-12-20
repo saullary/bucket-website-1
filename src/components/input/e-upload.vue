@@ -11,19 +11,20 @@
 <template>
   <div>
     <div class="e-upload">
-      <v-data-table
-        v-show="files.length > 0"
-        class="elevation-1"
-        :headers="headers"
-        :items="list"
-        hide-default-footer
-      >
-        <template v-slot:item.action="{ item }">
-          <v-btn icon @click="onDel(item.index)">
-            <v-icon size="18">mdi-trash-can-outline</v-icon>
-          </v-btn>
-        </template>
-      </v-data-table>
+      <div style="min-height: 150px" v-show="files.length > 0">
+        <v-data-table
+          class="elevation-1"
+          :headers="headers"
+          :items="list"
+          hide-default-footer
+        >
+          <template v-slot:item.action="{ item }">
+            <v-btn icon @click="onDel(item.index)">
+              <v-icon size="18">mdi-trash-can-outline</v-icon>
+            </v-btn>
+          </template>
+        </v-data-table>
+      </div>
 
       <div class="add-img pos-r bdrs-10" v-ripple v-show="files.length == 0">
         <div class="ta-c">
@@ -127,8 +128,10 @@ export default {
       if (!data) return;
       const { files = [] } = data;
       for (const file of files) {
+        console.log(file);
         if (this.limit && this.files.length >= this.limit) break;
         // if (!/image/.test(file.type)) continue;
+        // if (!file.type) continue;
         if (file.size > Math.pow(1024, 2) * 30) {
           this.$toast(`${file.name} is too larg (over 30MB)`);
           continue;

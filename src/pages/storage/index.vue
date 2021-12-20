@@ -102,12 +102,7 @@ export default {
             counter: true,
             maxlength: 60,
             trim: true,
-            rules: [
-              (v) => !!v || "Invalid Name",
-              (v) =>
-                /^[a-z\d-]+$/.test(v) ||
-                "Only lowercase letters(a-z), numbers and dash(-) are allowed",
-            ],
+            rules: [(v) => !!v || "Invalid Name"],
             required: true,
           },
         });
