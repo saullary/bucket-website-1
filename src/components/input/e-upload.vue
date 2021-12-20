@@ -17,6 +17,8 @@
           :headers="headers"
           :items="list"
           hide-default-footer
+          fixed-header
+          :height="files.length > (asMobile ? 2 : 5) ? '50vh' : null"
         >
           <template v-slot:item.action="{ item }">
             <v-btn icon @click="onDel(item.index)">
@@ -61,7 +63,7 @@ export default {
     },
     limit: {
       type: Number,
-      default: 5,
+      default: 10,
     },
     value: Array,
   },
@@ -85,6 +87,9 @@ export default {
     };
   },
   computed: {
+    asMobile() {
+      return this.$vuetify.breakpoint.smAndDown;
+    },
     list() {
       const mb = Math.pow(1024, 2);
       return this.files.map((it, index) => {
@@ -128,7 +133,7 @@ export default {
       if (!data) return;
       const { files = [] } = data;
       for (const file of files) {
-        console.log(file);
+        // console.log(file);
         if (this.limit && this.files.length >= this.limit) break;
         // if (!/image/.test(file.type)) continue;
         // if (!file.type) continue;
