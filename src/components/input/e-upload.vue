@@ -46,7 +46,7 @@
       <p class="ta-c mt-5">
         <v-btn text @click="onClick">
           <span class="gray">
-            Drag, Paste or <span class="color-1">click to upload files</span>
+            Drag, Paste or <span class="color-1">Click to upload files</span>
           </span>
         </v-btn>
       </p>

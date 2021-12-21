@@ -15,7 +15,7 @@
     <v-dialog
       v-model="showLoading"
       max-width="260px"
-      :persistent="!alertInfo.maskClick"
+      :persistent="alertInfo.persistent"
     >
       <v-card>
         <div class="ta-c pd-30">
@@ -34,7 +34,7 @@
     <v-dialog
       v-model="showAlert"
       max-width="500"
-      :persistent="alertInfo.showCancel"
+      :persistent="alertInfo.persistent"
     >
       <v-card class="pd-10">
         <v-card-title v-if="!alertInfo.hideTitle">
@@ -182,7 +182,6 @@ export default {
     Vue.prototype.$loading = (title, opts = {}) => {
       return showModal({
         title,
-        maskClick: true,
         ...opts,
         type: "loading",
         isLoading: true,
