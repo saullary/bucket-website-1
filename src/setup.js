@@ -51,6 +51,13 @@ Vue.prototype.$utils = {
     while (str.length < len) {
       str += Math.random().toString(radix).substr(2);
     }
-    return str.substr(0, len);
+    return str.substring(0, len);
+  },
+  getFileSize(byte) {
+    const mb = Math.pow(1024, 2);
+    let size;
+    if (byte > mb) size = (byte / mb).toFixed(2) + " MB";
+    else size = (byte / 1024).toFixed(2) + " KB";
+    return size;
   },
 };

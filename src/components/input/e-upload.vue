@@ -2,7 +2,7 @@
 .e-upload {
   margin: 20px 0 30px;
   .add-img {
-    padding: 40px 0;
+    padding: 60px 0;
     border: 3px dashed #ddd;
   }
 }
@@ -11,22 +11,7 @@
 <template>
   <div>
     <div class="e-upload">
-      <div style="min-height: 150px" v-show="files.length > 0">
-        <v-data-table
-          class="elevation-1"
-          :headers="headers"
-          :items="list"
-          hide-default-footer
-          fixed-header
-          :height="files.length > (asMobile ? 2 : 5) ? '50vh' : null"
-        >
-          <template v-slot:item.action="{ item }">
-            <v-btn icon @click="onDel(item.index)">
-              <v-icon size="18">mdi-trash-can-outline</v-icon>
-            </v-btn>
-          </template>
-        </v-data-table>
-      </div>
+      <slot></slot>
 
       <div class="add-img pos-r bdrs-10" v-ripple v-show="files.length == 0">
         <div class="ta-c">
@@ -70,40 +55,9 @@ export default {
   data() {
     return {
       files: [],
-      headers: [
-        {
-          text: "Name",
-          value: "name",
-        },
-        {
-          text: "Size",
-          value: "size",
-        },
-        {
-          text: "Action",
-          value: "action",
-        },
-      ],
     };
   },
-  computed: {
-    asMobile() {
-      return this.$vuetify.breakpoint.smAndDown;
-    },
-    list() {
-      const mb = Math.pow(1024, 2);
-      return this.files.map((it, index) => {
-        let size = it.size + " B";
-        if (it.size > mb) size = (it.size / mb).toFixed(2) + " MB";
-        else if (it.size > 1024) size = (it.size / 1024).toFixed(2) + " KB";
-        return {
-          name: it.name,
-          size,
-          index,
-        };
-      });
-    },
-  },
+  computed: {},
   watch: {
     value(val) {
       if (!val || val.length == 0) {
@@ -163,10 +117,6 @@ export default {
     },
     emitInput() {
       this.$emit("input", this.files);
-    },
-    onDel(i) {
-      this.files.splice(i, 1);
-      this.emitInput();
     },
   },
 };
