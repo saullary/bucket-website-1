@@ -28,7 +28,7 @@
           @input="onInput"
         />
       </div>
-      <p class="ta-c mt-5">
+      <p class="ta-c mt-5" v-if="!disabled">
         <v-btn text @click="onClick">
           <span class="gray">
             Drag, Paste or <span class="color-1">Click to upload files</span>
@@ -51,6 +51,7 @@ export default {
       default: 10,
     },
     value: Array,
+    disabled: Boolean,
   },
   data() {
     return {
@@ -84,6 +85,7 @@ export default {
       this.$refs.file.click();
     },
     getFiles(data) {
+      if (this.disabled) return;
       if (!data) return;
       const { files = [] } = data;
       for (const file of files) {
