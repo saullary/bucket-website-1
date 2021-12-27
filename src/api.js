@@ -6,12 +6,40 @@ const http = Axios.create({
   baseURL: process.env.VUE_APP_BASE_URL,
 });
 
+const authApi = "https://auth.foreverland.xyz";
+const RefreshPath = "/refresh";
+
 http.interceptors.request.use(
-  (config) => {
-    const { token } = localStorage;
-    // config.params = config.params || {}
-    if (token) {
-      config.headers.common["token"] = token;
+  async (config) => {
+    let token = localStorage.token;
+    let { accessTokenExpireAt, refreshToken } = JSON.parse(
+      localStorage.authData || "{}"
+    );
+    if (config.url != RefreshPath && Date.now() >= accessTokenExpireAt) {
+      const { data } = await http.post(
+        RefreshPath,
+        {
+          refreshToken,
+        },
+        {
+          params: {
+            _auth: 1,
+          },
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
+      localStorage.authData = JSON.stringify(data);
+      token = data.accessToken;
+    }
+    const params = (config.params = config.params || {});
+    if (params._auth && !/^http/.test(config.url)) {
+      config.url = authApi + config.url;
+      delete params._auth;
+    }
+    if (token && config.url != RefreshPath) {
+      config.headers.common["Authorization"] = token;
     }
     return config;
   },
@@ -26,6 +54,7 @@ function goLogin() {
   delete localStorage.userInfo;
   localStorage.loginTo = location.hash;
   location.href = "index.html";
+  // console.log("logout");
 }
 
 http.interceptors.response.use(

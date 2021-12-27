@@ -54,9 +54,10 @@
     <div class="pos-btm">
       <a href="/" class="d-flex al-c pa-2 ml-4 mb-4 hover-1">
         <v-avatar color="indigo" size="30">
-          <v-icon dark> mdi-account </v-icon>
+          <v-img :src="userInfo.avatar" v-if="userInfo.avatar"></v-img>
+          <v-icon dark v-else> mdi-account </v-icon>
         </v-avatar>
-        <span class="ml-3 gray-3">username</span>
+        <span class="ml-3 gray-3">{{ userInfo.username || "Unknown" }}</span>
         <v-icon class="ml-auto" color="#aaa">mdi-chevron-right</v-icon>
       </a>
     </div>
@@ -78,6 +79,7 @@ export default {
   computed: {
     ...mapState({
       noticeMsg: (s) => s.noticeMsg,
+      userInfo: (s) => s.userInfo,
     }),
     path() {
       return this.$route.path;

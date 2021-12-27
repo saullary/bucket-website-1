@@ -20,6 +20,7 @@ const store = new Vuex.Store({
     userInfo: JSON.parse(localStorage.userInfo || "{}"),
     noticeMsg: {},
     alertInfo: {},
+    s3: null,
   },
   mutations: {
     [SET_DATA](state, data) {

@@ -1,3 +1,4 @@
+import Home from "./home";
 import Storage from "./storage";
 import Domain from "./domain";
 import Billing from "./billing";
@@ -6,7 +7,10 @@ import Settings from "./settings";
 export default [
   {
     path: "/",
-    redirect: "/storage/",
+    component: Home,
+    meta: {
+      noLogin: true,
+    },
   },
   {
     path: "/storage/*",

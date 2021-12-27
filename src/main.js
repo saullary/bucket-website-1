@@ -5,7 +5,7 @@ import store from "./store";
 import { mapState } from "vuex";
 import vuetify from "./plugins/vuetify";
 import "./setup";
-// import locales from "./locales";
+import AWS from "aws-sdk";
 Vue.config.productionTip = false;
 
 router.beforeEach((to, _, next) => {
@@ -25,7 +25,6 @@ new Vue({
   router,
   store,
   vuetify,
-  // i18n: locales,
   render: (h) => h(App),
   computed: {
     ...mapState({
@@ -43,7 +42,7 @@ new Vue({
     },
     token(val) {
       if (val) {
-        // this.onInit();
+        this.onInit();
       }
     },
     noticeMsg({ name }) {
@@ -54,7 +53,6 @@ new Vue({
   },
   methods: {
     async onInit() {
-      const now = Date.now();
       if (this.token) {
         await this.getUesrInfo();
         this.$setState({
@@ -62,21 +60,27 @@ new Vue({
             name: "onInit",
           },
         });
-        try {
-          if (now - localStorage.refreshAt > 2 * 3600e3) {
-            await this.$http.get("/githubapp/refresh");
-            localStorage.refreshAt = now;
-          }
-        } catch (error) {
-          console.log(error.response);
-        }
       }
     },
     async getUesrInfo() {
       const { data } = await this.$http.get("/user");
       localStorage.userInfo = JSON.stringify(data);
+      const { accessKey, secretKey } = data;
+      const credentials = new AWS.Credentials({
+        accessKeyId: accessKey,
+        secretAccessKey: secretKey,
+      });
+      const s3 = (this.$s3 = new AWS.S3({
+        endpoint: "s3gw.foreverland.xyz",
+        credentials,
+        // sslEnabled: false,
+        signatureVersion: "v2",
+      }));
+      window.s3 = s3;
+      console.log("s3", s3);
       this.$setState({
         userInfo: data,
+        s3,
       });
     },
   },

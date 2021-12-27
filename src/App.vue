@@ -1,8 +1,8 @@
 <template>
   <v-app>
-    <e-drawer />
+    <e-drawer v-if="!meta.noLogin" />
     <v-main>
-      <e-header />
+      <e-header v-if="!meta.noLogin" />
       <e-wrap>
         <keep-alive>
           <router-view></router-view>
@@ -15,5 +15,11 @@
 </template>
 
 <script>
-export default {};
+export default {
+  computed: {
+    meta() {
+      return this.$route.meta || {};
+    },
+  },
+};
 </script>
