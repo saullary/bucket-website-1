@@ -183,7 +183,7 @@ export default {
     async onDelete() {
       try {
         const suffix = this.selected.length > 1 ? "s" : "";
-        const target = this.inBucket ? "Bucket" : "Folder(or File)";
+        const target = this.inBucket ? "Bucket" : "File";
         let html = `The following ${target}${suffix} will be permanently deleted. Are you sure you want to continue?<ul class='mt-4'>`;
         for (const row of this.selected) {
           html += "<li>" + row.name + "</li>";
