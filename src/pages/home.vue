@@ -57,6 +57,7 @@ export default {
       }
       if (code) {
         try {
+          this.$loading();
           const { data } = await this.$http.post(`/auth/${code}`, null, {
             params: {
               _auth: 1,
@@ -77,6 +78,7 @@ export default {
         } catch (error) {
           console.log(error);
         }
+        this.$loading.close();
         return;
       }
       if (localStorage.token) {

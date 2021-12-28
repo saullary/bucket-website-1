@@ -79,6 +79,9 @@
         item-key="name"
         hide-default-footer
       >
+        <!-- <template v-slot:item.data-table-select="row">
+          <v-checkbox v-model="row.isSelected" @input="row.select"></v-checkbox>
+        </template> -->
         <template v-slot:item.name="{ item }">
           <v-btn
             :color="inBucket ? 'primary' : '#000'"
