@@ -74,6 +74,7 @@
         :items="list"
         :loading="tableLoading"
         v-model="selected"
+        selectable-key="isSelectable"
         :show-select="list.length > 0"
         item-key="name"
         hide-default-footer
