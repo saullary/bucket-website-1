@@ -86,6 +86,7 @@ export default {
   watch: {
     path() {
       this.selected = [];
+      this.folderList = [];
       this.getList();
     },
     s3() {
@@ -104,23 +105,27 @@ export default {
       }
     },
     getObjects() {
-      this.folderList = [];
       this.tableLoading = true;
       const { Prefix } = this.pathInfo;
+      const filterFn = (it) => {
+        return (it.Prefix || it.Key).indexOf(this.pathInfo.Prefix) == 0;
+      };
       this.s3.listObjectsV2(this.pathInfo, (err, data) => {
         this.tableLoading = false;
         if (err) return this.onErr(err);
+        console.log(data, Prefix);
         this.folderList = [
-          ...data.CommonPrefixes.map((it) => {
+          ...(data.CommonPrefixes || []).filter(filterFn).map((it) => {
             return {
               name: it.Prefix.replace(Prefix, "").replace("/", ""),
             };
           }),
-          ...data.Contents.map((it) => {
+          ...data.Contents.filter(filterFn).map((it) => {
             return {
               name: it.Key.replace(Prefix, ""),
               updateAt: it.LastModified.format(),
               size: this.$utils.getFileSize(it.Size),
+              hash: it.ETag.replace(/"/g, ""),
               isFile: true,
             };
           }),

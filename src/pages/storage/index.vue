@@ -7,7 +7,11 @@
     ></v-skeleton-loader>
   </div>
   <div v-else>
-    <storage-upload ref="upload"></storage-upload>
+    <storage-upload
+      ref="upload"
+      :info="pathInfo"
+      @uploaded="getList"
+    ></storage-upload>
 
     <e-hcon>
       <template v-if="inBucket">
@@ -56,10 +60,10 @@
               <span class="d-ib" style="min-width: 110px">Name:</span>
               <span class="gray">{{ fileName }}</span>
             </li>
-            <li class="mt-2">
+            <!-- <li class="mt-2">
               <span class="d-ib" style="min-width: 110px">Size:</span>
               <span class="gray">100KB</span>
-            </li>
+            </li> -->
           </ul>
         </div>
       </v-card>
@@ -118,7 +122,7 @@ export default {
             required: true,
           },
         });
-        this.$toast(name);
+        this.$router.push(this.path + "/" + name);
       } catch (error) {
         console.log(error);
       }

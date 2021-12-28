@@ -93,8 +93,8 @@ export default {
         if (this.limit && this.files.length >= this.limit) break;
         // if (!/image/.test(file.type)) continue;
         // if (!file.type) continue;
-        if (file.size > Math.pow(1024, 2) * 30) {
-          this.$toast(`${file.name} is too larg (over 30MB)`);
+        if (file.size > Math.pow(1024, 2) * 300) {
+          this.$toast(`${file.name} is too larg (over 300MB)`);
           continue;
         }
         const isRepeat =

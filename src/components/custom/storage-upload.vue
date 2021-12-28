@@ -31,8 +31,14 @@
                       size="24"
                       :width="3"
                       :color="curIdx > item.index ? 'success' : 'primary'"
-                      :indeterminate="curIdx < item.index"
-                      :value="curIdx > item.index ? 100 : progress"
+                      :indeterminate="curIdx == item.index && progress == 0"
+                      :value="
+                        curIdx > item.index
+                          ? 100
+                          : curIdx == item.index
+                          ? progress
+                          : 0
+                      "
                     ></v-progress-circular>
                   </template>
                   <template v-else>
@@ -64,9 +70,12 @@
 </template>
 
 <script>
+import { Upload } from "@aws-sdk/lib-storage";
+
 export default {
   props: {
     value: Boolean,
+    info: Object,
   },
   data() {
     return {
@@ -122,8 +131,8 @@ export default {
     },
   },
   watch: {
-    files() {
-      this.showPop = true;
+    files(val) {
+      if (val.length) this.showPop = true;
     },
   },
   methods: {
@@ -140,20 +149,41 @@ export default {
     async onConfirm() {
       this.uploading = true;
       this.curIdx = 0;
-      this.progress = 0;
-      while (this.progress < 100) {
-        await this.$sleep(200);
-        this.progress = Math.min(100, this.progress + Math.random() * 50);
-        if (this.progress == 100) {
-          if (this.curIdx == this.files.length - 1) this.uploading = false;
-          else {
-            this.curIdx += 1;
-            this.progress = 0;
-          }
+      let sucNum = 0;
+      const { Bucket, Prefix } = this.info;
+      for (const file of this.files) {
+        this.progress = 0;
+        const params = {
+          Bucket,
+          Key: Prefix + file.name,
+          Body: file,
+        };
+        try {
+          const task = new Upload({
+            client: this.$s3,
+            queueSize: 3,
+            params,
+          });
+          task.on("httpUploadProgress", (e) => {
+            this.progress = ((e.loaded / e.total) * 100) | 0;
+            console.log(e);
+          });
+          await task.done();
+          sucNum += 1;
+        } catch (error) {
+          //
         }
+        this.curIdx += 1;
       }
-      // for (const file of this.files) {
-      // }
+      this.$toast(
+        `${sucNum} file${sucNum > 1 ? "s" : ""} uploaded successfully`
+      );
+      await this.$sleep(300);
+      this.showPop = false;
+      await this.$sleep(300);
+      this.uploading = false;
+      this.files = [];
+      this.$emit("uploaded");
     },
   },
 };

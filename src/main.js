@@ -5,7 +5,8 @@ import store from "./store";
 import { mapState } from "vuex";
 import vuetify from "./plugins/vuetify";
 import "./setup";
-import AWS from "aws-sdk";
+// import AWS from "aws-sdk";
+import { S3 } from "@aws-sdk/client-s3";
 Vue.config.productionTip = false;
 
 router.beforeEach((to, _, next) => {
@@ -66,15 +67,17 @@ new Vue({
       const { data } = await this.$http.get("/user");
       localStorage.userInfo = JSON.stringify(data);
       const { accessKey, secretKey } = data;
-      const credentials = new AWS.Credentials({
-        accessKeyId: accessKey,
-        secretAccessKey: secretKey,
-      });
-      const s3 = new AWS.S3({
-        endpoint: "s3gw.foreverland.xyz",
-        credentials,
+      // const credentials = new AWS.Credentials({
+      // });
+      const s3 = new S3({
+        endpoint: "https://s3gw.foreverland.xyz",
         signatureVersion: "v2",
         s3ForcePathStyle: true,
+        credentials: {
+          accessKeyId: accessKey,
+          secretAccessKey: secretKey,
+        },
+        region: "eu-west-2",
       });
       window.s3 = Vue.prototype.$s3 = s3;
       console.log("s3", s3);
