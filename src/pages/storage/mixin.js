@@ -68,29 +68,28 @@ export default {
     },
     list() {
       if (this.inBucket) return this.bucketList;
-      const tmp = this.path.split("/").length - 2;
-      if (!this.isFile)
-        return [
-          {
-            name: "test-folder" + tmp,
-            size: "-",
-            hash: "-",
-          },
-          {
-            name: `test${tmp}.png`,
-            size: "100k",
-            hash: "asdf",
-          },
-        ];
+      if (!this.isFile) return this.folderList;
       return [];
+    },
+    pathInfo() {
+      if (this.inBucket) return {};
+      const arr = this.path.split("/").slice(2);
+      let Prefix = arr.slice(1).join("/");
+      if (Prefix) Prefix += "/";
+      return {
+        Bucket: arr[0],
+        Prefix,
+        Delimiter: "/",
+      };
     },
   },
   watch: {
     path() {
       this.selected = [];
+      this.getList();
     },
     s3() {
-      this.getBuckets();
+      this.getList();
     },
   },
   methods: {
@@ -100,7 +99,33 @@ export default {
     getList() {
       if (this.inBucket) {
         this.getBuckets();
+      } else {
+        this.getObjects();
       }
+    },
+    getObjects() {
+      this.folderList = [];
+      this.tableLoading = true;
+      const { Prefix } = this.pathInfo;
+      this.s3.listObjectsV2(this.pathInfo, (err, data) => {
+        this.tableLoading = false;
+        if (err) return this.onErr(err);
+        this.folderList = [
+          ...data.CommonPrefixes.map((it) => {
+            return {
+              name: it.Prefix.replace(Prefix, "").replace("/", ""),
+            };
+          }),
+          ...data.Contents.map((it) => {
+            return {
+              name: it.Key.replace(Prefix, ""),
+              updateAt: it.LastModified.format(),
+              size: this.$utils.getFileSize(it.Size),
+              isFile: true,
+            };
+          }),
+        ];
+      });
     },
     getBuckets() {
       this.tableLoading = true;

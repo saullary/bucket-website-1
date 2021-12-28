@@ -82,7 +82,7 @@
             small
             :to="path + (inBucket ? '' : '/') + item.name"
           >
-            <v-icon v-if="!/\./.test(item.name)" size="18" class="mr-2"
+            <v-icon v-if="!item.isFile" size="18" class="mr-2"
               >mdi-{{ inBucket ? "folder-multiple" : "folder" }}</v-icon
             >
             <b>{{ item.name }}</b></v-btn
