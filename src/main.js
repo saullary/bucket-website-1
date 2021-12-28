@@ -70,13 +70,13 @@ new Vue({
         accessKeyId: accessKey,
         secretAccessKey: secretKey,
       });
-      const s3 = (this.$s3 = new AWS.S3({
+      const s3 = new AWS.S3({
         endpoint: "s3gw.foreverland.xyz",
         credentials,
-        // sslEnabled: false,
         signatureVersion: "v2",
-      }));
-      window.s3 = s3;
+        s3ForcePathStyle: true,
+      });
+      window.s3 = Vue.prototype.$s3 = s3;
       console.log("s3", s3);
       this.$setState({
         userInfo: data,

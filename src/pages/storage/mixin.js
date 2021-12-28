@@ -1,10 +1,20 @@
+import { mapState } from "vuex";
+
 export default {
   data() {
     return {
       // isFile: false,
+      tableLoading: false,
+      bucketList: [],
+      folderList: [],
+      selected: [],
+      deleting: false,
     };
   },
   computed: {
+    ...mapState({
+      s3: (s) => s.s3,
+    }),
     path() {
       return this.$route.path;
     },
@@ -76,8 +86,68 @@ export default {
     },
   },
   watch: {
-    // path(val) {
-    //   console.log(val);
-    // },
+    path() {
+      this.selected = [];
+    },
+    s3() {
+      this.getBuckets();
+    },
+  },
+  methods: {
+    onErr(err) {
+      this.$alert(err.message);
+    },
+    getList() {
+      if (this.inBucket) {
+        this.getBuckets();
+      }
+    },
+    getBuckets() {
+      this.tableLoading = true;
+      this.s3.listBuckets({}, (err, data) => {
+        this.tableLoading = false;
+        if (err) return this.onErr(err);
+        this.bucketList = data.Buckets.map((it) => {
+          return {
+            name: it.Name,
+            createAt: it.CreationDate.format(),
+          };
+        });
+      });
+    },
+    delBucket(Bucket) {
+      return new Promise((resolve, reject) => {
+        this.s3.deleteBucket(
+          {
+            Bucket,
+          },
+          (err, data) => {
+            if (err) reject(err);
+            else resolve(data);
+          }
+        );
+      });
+    },
+    async onDelete() {
+      try {
+        const suffix = this.selected.length > 1 ? "s" : "";
+        const target = this.inBucket ? "Bucket" : "Folder(or File)";
+        let html = `The following ${target}${suffix} will be permanently deleted. Are you sure you want to continue?<ul class='mt-4'>`;
+        for (const row of this.selected) {
+          html += "<li>" + row.name + "</li>";
+        }
+        html += "</ul>";
+        await this.$confirm(html, `Remove ${target}${suffix}`);
+        this.deleting = true;
+        for (const row of this.selected) {
+          await this.delBucket(row.name);
+        }
+      } catch (err) {
+        if (err) this.onErr(err);
+      }
+      this.selected = [];
+      this.deleting = false;
+      this.getList();
+    },
   },
 };

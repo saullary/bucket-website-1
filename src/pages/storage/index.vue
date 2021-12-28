@@ -1,5 +1,12 @@
 <template>
-  <div>
+  <div v-if="!s3">
+    <v-skeleton-loader
+      class="mt-2"
+      type="article"
+      max-width="500"
+    ></v-skeleton-loader>
+  </div>
+  <div v-else>
     <storage-upload ref="upload"></storage-upload>
 
     <e-hcon>
@@ -25,6 +32,15 @@
           <span class="ml-1">New Folder</span>
         </v-btn>
       </template>
+      <v-btn
+        @click="onDelete"
+        :loading="deleting"
+        color="error"
+        class="ml-5"
+        v-show="!isFile && selected.length"
+      >
+        <v-icon>mdi-trash-can-outline</v-icon>
+      </v-btn>
     </e-hcon>
 
     <v-breadcrumbs :items="navItems" class="pl-0 mt-3"></v-breadcrumbs>
@@ -49,7 +65,15 @@
       </v-card>
     </div>
     <div v-else>
-      <v-data-table :headers="headers" :items="list" hide-default-footer>
+      <v-data-table
+        :headers="headers"
+        :items="list"
+        :loading="tableLoading"
+        v-model="selected"
+        :show-select="list.length > 0"
+        item-key="name"
+        hide-default-footer
+      >
         <template v-slot:item.name="{ item }">
           <v-btn
             :color="inBucket ? 'primary' : '#000'"
@@ -77,18 +101,6 @@ export default {
   data() {
     return {
       popUpload: false,
-      bucketList: [
-        {
-          name: "test-bucket1",
-          domain: "test.com",
-          createAt: "2021-12-13",
-        },
-        {
-          name: "test-bucket2",
-          domain: "test.com",
-          createAt: "2021-12-13",
-        },
-      ],
     };
   },
   methods: {
@@ -113,7 +125,7 @@ export default {
     },
     async addBucket() {
       try {
-        const { value: name } = await this.$prompt("", "New Bucket", {
+        const { value: Bucket } = await this.$prompt("", "New Bucket", {
           icon: "mdi-folder-multiple-plus",
           inputAttrs: {
             label: "Bucket Name",
@@ -134,11 +146,17 @@ export default {
             required: true,
           },
         });
-        this.bucketList.push({
-          name,
-          domain: "-",
-          createAt: new Date().format(),
-        });
+        this.$loading();
+        this.s3.createBucket(
+          {
+            Bucket,
+          },
+          (err) => {
+            if (err) return this.onErr(err);
+            this.$loading.close();
+            this.getBuckets();
+          }
+        );
       } catch (error) {
         console.log(error);
       }
