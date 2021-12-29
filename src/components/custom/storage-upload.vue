@@ -98,6 +98,7 @@ export default {
       progress: 0,
       curIdx: 0,
       uploading: false,
+      isPause: false,
     };
   },
   computed: {
@@ -147,11 +148,19 @@ export default {
       else this.files = [];
     },
     async onConfirm() {
+      if (this.uploading) {
+        this.isPause = true;
+        this.uploading = false;
+        this.curTask.abort();
+        return;
+      }
       this.uploading = true;
+      this.isPause = false;
       this.curIdx = 0;
       let sucNum = 0;
       const { Bucket, Prefix } = this.info;
       for (const file of this.files) {
+        if (this.isPause) break;
         this.progress = 0;
         const params = {
           Bucket,
@@ -164,6 +173,7 @@ export default {
             queueSize: 3,
             params,
           });
+          this.curTask = task;
           task.on("httpUploadProgress", (e) => {
             this.progress = ((e.loaded / e.total) * 100) | 0;
             console.log(e);
@@ -171,19 +181,25 @@ export default {
           await task.done();
           sucNum += 1;
         } catch (error) {
-          //
+          console.log("task", error);
         }
         this.curIdx += 1;
       }
-      this.$toast(
-        `${sucNum} file${sucNum > 1 ? "s" : ""} uploaded successfully`
-      );
+      this.$emit("uploaded");
+      if (sucNum) {
+        this.$toast(
+          `${sucNum} file${sucNum > 1 ? "s" : ""} uploaded successfully`
+        );
+        if (this.isPause) {
+          this.files.splice(0, sucNum);
+          return;
+        }
+      }
       await this.$sleep(300);
       this.showPop = false;
       await this.$sleep(300);
       this.uploading = false;
       this.files = [];
-      this.$emit("uploaded");
     },
   },
 };
