@@ -160,6 +160,7 @@ export default {
           Bucket,
           Key: Prefix + file.name,
           Body: file,
+          ContentType: file.type,
         };
         try {
           const task = new Upload({

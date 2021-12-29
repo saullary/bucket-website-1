@@ -20,7 +20,7 @@
           <span class="ml-1">New Bucket</span>
         </v-btn>
       </template>
-      <template v-else-if="isFile">
+      <template v-else-if="inFile">
         <v-btn color="primary">
           <v-icon size="15">mdi-cloud-download</v-icon>
           <span class="ml-1">Download</span>
@@ -41,7 +41,7 @@
         :loading="deleting"
         color="error"
         class="ml-5"
-        v-show="!isFile && selected.length"
+        v-show="!inFile && selected.length"
       >
         <v-icon>mdi-trash-can-outline</v-icon>
       </v-btn>
@@ -49,21 +49,24 @@
 
     <v-breadcrumbs :items="navItems" class="pl-0 mt-3"></v-breadcrumbs>
 
-    <div v-if="isFile">
+    <div v-if="inFile">
       <v-card outlined>
         <div class="pd-15-20">
           <span>File Info</span>
         </div>
-        <div class="pd-20 bdt-1">
-          <ul class="ls-none">
-            <li>
-              <span class="d-ib" style="min-width: 110px">Name:</span>
-              <span class="gray">{{ fileName }}</span>
+        <div class="pd-15-20 bdt-1">
+          <v-skeleton-loader
+            v-if="fileLoading"
+            type="article"
+          ></v-skeleton-loader>
+          <div v-else-if="!fileInfo">
+            <span class="gray">Not Found</span>
+          </div>
+          <ul class="ls-none" v-else>
+            <li class="mt-3" v-for="(it, i) in fileInfoList" :key="i">
+              <span class="d-ib" style="min-width: 130px">{{ it.label }}:</span>
+              <span class="gray">{{ it.value }}</span>
             </li>
-            <!-- <li class="mt-2">
-              <span class="d-ib" style="min-width: 110px">Size:</span>
-              <span class="gray">100KB</span>
-            </li> -->
           </ul>
         </div>
       </v-card>
@@ -74,7 +77,6 @@
         :items="list"
         :loading="tableLoading"
         v-model="selected"
-        selectable-key="isSelectable"
         :show-select="list.length > 0"
         item-key="name"
         hide-default-footer
@@ -88,7 +90,7 @@
             rounded
             text
             small
-            :to="path + (inBucket ? '' : '/') + item.name"
+            :to="path + item.name + (item.isFile ? '' : '/')"
           >
             <v-icon v-if="!item.isFile" size="18" class="mr-2"
               >mdi-{{ inBucket ? "folder-multiple" : "folder" }}</v-icon
@@ -121,7 +123,47 @@ export default {
   data() {
     return {
       popUpload: false,
+      fileLoading: false,
+      fileInfo: null,
     };
+  },
+  computed: {
+    headers() {
+      if (this.inBucket)
+        return [
+          { text: "Bucket Name", value: "name" },
+          { text: "Domain", value: "domain" },
+          { text: "CreateAt", value: "createAt" },
+        ];
+      return [
+        { text: "Name", value: "name" },
+        { text: "Size", value: "size" },
+        { text: "IPFS Hash", value: "hash" },
+        { text: "Last Modified", value: "updateAt" },
+      ];
+    },
+    fileInfoList() {
+      const info = this.fileInfo;
+      if (!info) return [];
+      return [
+        {
+          label: "Name",
+          value: this.fileName,
+        },
+        {
+          label: "Size",
+          value: this.$utils.getFileSize(info.size),
+        },
+        {
+          label: "Last Modified",
+          value: info.updateAt.format(),
+        },
+        {
+          label: "IPFS Hash",
+          value: info.hash,
+        },
+      ];
+    },
   },
   methods: {
     async addFolder() {

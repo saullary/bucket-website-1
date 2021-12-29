@@ -5,7 +5,6 @@ const BasePath = "/storage/";
 export default {
   data() {
     return {
-      // isFile: false,
       tableLoading: false,
       bucketList: [],
       folderList: [],
@@ -18,7 +17,7 @@ export default {
       s3: (s) => s.s3,
     }),
     path() {
-      return this.$route.path;
+      return decodeURIComponent(this.$route.path);
     },
     inStorage() {
       return new RegExp(BasePath).test(this.path);
@@ -26,11 +25,11 @@ export default {
     inBucket() {
       return this.path == BasePath;
     },
-    isFile() {
-      return /\./.test(this.path);
+    inFile() {
+      return this.inStorage && !/\/$/.test(this.path);
     },
-    isFolder() {
-      return !this.inBucket && !this.isFile;
+    inFolder() {
+      return !this.inBucket && !this.inFile;
     },
     fileName() {
       const arr = this.path.split("/");
@@ -46,44 +45,36 @@ export default {
         },
       ];
       const arr = this.path.replace(to, "").split("/");
-      for (const text of arr) {
-        to += text;
+      for (const i in arr) {
+        const text = arr[i];
+        // if (!text) break;
+        to += text + (arr[i + 1] == "" ? "" : "/");
         items.push({
           text,
           to,
           exact: true,
         });
-        to += "/";
       }
       return items;
     },
-    headers() {
-      if (this.inBucket)
-        return [
-          { text: "Bucket Name", value: "name" },
-          { text: "Domain", value: "domain" },
-          { text: "CreateAt", value: "createAt" },
-        ];
-      return [
-        { text: "Name", value: "name" },
-        { text: "Size", value: "size" },
-        { text: "IPFS Hash", value: "hash" },
-        { text: "Last Modified", value: "updateAt" },
-      ];
-    },
     list() {
       if (this.inBucket) return this.bucketList;
-      if (!this.isFile) return this.folderList;
+      if (this.inFolder) return this.folderList;
       return [];
     },
     pathInfo() {
-      if (this.inBucket) return {};
+      if (this.inBucket || !this.inStorage) return {};
       const arr = this.path.split("/").slice(2);
-      let Prefix = arr.slice(1).join("/");
-      if (Prefix) Prefix += "/";
+      const Key = arr.slice(1).join("/");
+      const Bucket = arr[0];
+      if (this.inFile)
+        return {
+          Bucket,
+          Key,
+        };
       return {
-        Bucket: arr[0],
-        Prefix,
+        Bucket,
+        Prefix: Key,
         Delimiter: "/",
       };
     },
@@ -106,9 +97,26 @@ export default {
     getList() {
       if (this.inBucket) {
         this.getBuckets();
-      } else {
+      } else if (this.inFile) {
+        this.getObject();
+      } else if (this.inFolder) {
         this.getObjects();
       }
+    },
+    getObject() {
+      this.fileLoading = true;
+      this.fileInfo = null;
+      this.s3.getObject(this.pathInfo, (err, data) => {
+        this.fileLoading = false;
+        if (err) return this.onErr(err);
+        // console.log(data);
+        this.fileInfo = {
+          size: data.ContentLength,
+          type: data.ContentType,
+          hash: data.ETag || "Unknown",
+          updateAt: data.LastModified,
+        };
+      });
     },
     getObjects() {
       this.tableLoading = true;
@@ -134,10 +142,10 @@ export default {
               size: this.$utils.getFileSize(it.Size),
               hash: it.ETag.replace(/"/g, ""),
               isFile: true,
-              isSelectable: true,
             };
           }),
         ];
+        // console.log(this.folderList);
       });
     },
     getBuckets() {
@@ -149,7 +157,6 @@ export default {
           return {
             name: it.Name,
             createAt: it.CreationDate.format(),
-            isSelectable: true,
           };
         });
       });
