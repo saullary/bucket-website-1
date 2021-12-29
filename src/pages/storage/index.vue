@@ -180,7 +180,7 @@ export default {
             required: true,
           },
         });
-        this.$router.push(this.path + "/" + name);
+        this.$router.push(this.path + name + "/");
       } catch (error) {
         console.log(error);
       }

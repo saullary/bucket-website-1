@@ -96,6 +96,11 @@ export default {
     s3() {
       this.getList();
     },
+    // async bucketList(val) {
+    //   if (!val.length) return;
+    //   const { data } = await this.$http.get("/domains/stat");
+    //   console.log(data);
+    // },
   },
   methods: {
     onErr(err) {
