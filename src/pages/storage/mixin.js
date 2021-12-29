@@ -122,6 +122,7 @@ export default {
           }),
           ...(data.Contents || []).filter(filterFn).map((it) => {
             return {
+              Key: it.Key,
               name: it.Key.replace(Prefix, ""),
               updateAt: it.LastModified.format(),
               size: this.$utils.getFileSize(it.Size),
@@ -161,10 +162,7 @@ export default {
       });
     },
     delObjects(Objects) {
-      const { Bucket, Prefix } = this.pathInfo;
-      Objects.forEach((it) => {
-        it.Key = Prefix + it.Key;
-      });
+      const { Bucket } = this.pathInfo;
       const params = {
         Bucket,
         Delete: {
@@ -182,23 +180,24 @@ export default {
     },
     async onDelete() {
       try {
-        const suffix = this.selected.length > 1 ? "s" : "";
+        const arr = await this.getSelectedObjects();
+        const suffix = arr.length > 1 ? "s" : "";
         const target = this.inBucket ? "Bucket" : "File";
         let html = `The following ${target}${suffix} will be permanently deleted. Are you sure you want to continue?<ul class='mt-4'>`;
-        for (const row of this.selected) {
+        for (const row of arr) {
           html += "<li>" + row.name + "</li>";
         }
         html += "</ul>";
         await this.$confirm(html, `Remove ${target}${suffix}`);
         this.deleting = true;
         if (this.inBucket) {
-          for (const row of this.selected) {
+          for (const row of arr) {
             await this.delBucket(row.name);
           }
         } else {
           await this.delObjects(
-            this.selected.map((it) => {
-              return { Key: it.name };
+            arr.map((it) => {
+              return { Key: it.Key };
             })
           );
         }
@@ -208,6 +207,41 @@ export default {
       this.selected = [];
       this.deleting = false;
       this.getList();
+    },
+    async getSelectedObjects() {
+      if (this.inBucket) return this.selected;
+      let arr = [];
+      const { Prefix } = this.pathInfo;
+      for (const it of this.selected) {
+        if (it.isFile) arr.push(it);
+        else {
+          const objArr = await this.getSubObjects(it.name);
+          arr = arr.concat(
+            objArr.map((sub) => {
+              return {
+                Key: sub.Key,
+                name: sub.Key.replace(Prefix, ""),
+              };
+            })
+          );
+        }
+      }
+      return arr;
+    },
+    async getSubObjects(folder) {
+      const { Bucket, Prefix } = this.pathInfo;
+      const params = {
+        Bucket,
+        Prefix: Prefix + folder + "/",
+      };
+      return new Promise((resolve, reject) => {
+        this.$loading();
+        this.s3.listObjectsV2(params, (err, data) => {
+          this.$loading.close();
+          if (err) reject(err);
+          else resolve(data.Contents || []);
+        });
+      });
     },
   },
 };
