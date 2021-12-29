@@ -1,5 +1,7 @@
 import { mapState } from "vuex";
 
+const BasePath = "/storage/";
+
 export default {
   data() {
     return {
@@ -18,8 +20,11 @@ export default {
     path() {
       return this.$route.path;
     },
+    inStorage() {
+      return new RegExp(BasePath).test(this.path);
+    },
     inBucket() {
-      return this.path == "/storage/";
+      return this.path == BasePath;
     },
     isFile() {
       return /\./.test(this.path);
@@ -32,7 +37,7 @@ export default {
       return arr[arr.length - 1];
     },
     navItems() {
-      let to = "/storage/";
+      let to = BasePath;
       const items = [
         {
           text: "Storage",
@@ -85,6 +90,7 @@ export default {
   },
   watch: {
     path() {
+      if (!this.inStorage) return;
       this.selected = [];
       this.folderList = [];
       this.getList();
