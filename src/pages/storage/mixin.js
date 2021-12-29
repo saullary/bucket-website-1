@@ -208,7 +208,7 @@ export default {
       try {
         const arr = await this.getSelectedObjects();
         const suffix = arr.length > 1 ? "s" : "";
-        const target = this.inBucket ? "Bucket" : "File";
+        const target = this.inBucket ? "bucket" : "file";
         let html = `The following ${target}${suffix} will be permanently deleted. Are you sure you want to continue?<ul class='mt-4 ov-a' style="max-height: 40vh">`;
         for (const row of arr) {
           html += "<li>" + row.name + "</li>";
