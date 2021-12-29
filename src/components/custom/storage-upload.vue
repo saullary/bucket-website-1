@@ -56,13 +56,9 @@
           <v-btn v-if="!uploading" outlined @click="onClear">{{
             files.length ? "Clear" : "Cancel"
           }}</v-btn>
-          <v-btn
-            v-if="!(uploading && curIdx == files.length - 1)"
-            color="primary"
-            class="ml-4"
-            @click="onConfirm"
-            >{{ confirmTxt }}</v-btn
-          >
+          <v-btn color="primary" class="ml-4" @click="onConfirm">{{
+            confirmTxt
+          }}</v-btn>
         </div>
       </div>
     </v-dialog>
@@ -126,9 +122,7 @@ export default {
       return this.$utils.getFileSize(size);
     },
     confirmTxt() {
-      return this.uploading && this.curIdx < this.files.length - 1
-        ? "Pause"
-        : "Confirm";
+      return this.uploading ? "Abort" : "Confirm";
     },
   },
   watch: {
