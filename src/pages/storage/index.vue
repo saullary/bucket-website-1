@@ -107,7 +107,7 @@
             v-if="item.hash"
             :href="`https://${item.hash}.ipfs.dweb.link`"
           >
-            {{ item.hash }}
+            {{ item.hash.cutStr(10, 10) }}
           </v-btn>
         </template>
       </v-data-table>

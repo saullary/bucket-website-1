@@ -21,6 +21,7 @@ const store = new Vuex.Store({
     noticeMsg: {},
     alertInfo: {},
     s3: null,
+    searchKey: "",
   },
   mutations: {
     [SET_DATA](state, data) {

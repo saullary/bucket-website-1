@@ -15,6 +15,7 @@ export default {
   computed: {
     ...mapState({
       s3: (s) => s.s3,
+      searchKey: (s) => s.searchKey,
     }),
     path() {
       return decodeURIComponent(this.$route.path);
@@ -58,9 +59,15 @@ export default {
       return items;
     },
     list() {
-      if (this.inBucket) return this.bucketList;
-      if (this.inFolder) return this.folderList;
-      return [];
+      let list = [];
+      if (this.inBucket) list = this.bucketList;
+      else if (this.inFolder) list = this.folderList;
+      if (this.searchKey) {
+        list = list.filter((it) => {
+          return new RegExp(this.searchKey).test(it.name);
+        });
+      }
+      return list;
     },
     pathInfo() {
       if (this.inBucket || !this.inStorage) return {};
