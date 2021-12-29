@@ -101,11 +101,11 @@ export default {
           to: "/billing",
           icon: "credit-card-outline",
         },
-        {
-          label: "Settings",
-          to: "/settings",
-          icon: "cog-outline",
-        },
+        // {
+        //   label: "Settings",
+        //   to: "/settings",
+        //   icon: "cog-outline",
+        // },
         {
           label: "Docs",
           href: "https://bucket-docs.4everland.org",

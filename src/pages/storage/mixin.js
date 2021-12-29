@@ -166,6 +166,7 @@ export default {
             createAt: it.CreationDate.format(),
           };
         });
+        // console.log(this.bucketList);
       });
     },
     delBucket(Bucket) {

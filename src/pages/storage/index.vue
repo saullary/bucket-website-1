@@ -213,8 +213,9 @@ export default {
           {
             Bucket,
           },
-          (err) => {
+          async (err) => {
             if (err) return this.onErr(err);
+            await this.$sleep(500);
             this.$loading.close();
             this.getBuckets();
           }
