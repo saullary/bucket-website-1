@@ -96,6 +96,18 @@
             <b>{{ item.name }}</b></v-btn
           >
         </template>
+        <template v-slot:item.hash="{ item }">
+          <v-btn
+            rounded
+            small
+            text
+            target="_blank"
+            v-if="item.hash"
+            :href="`https://${item.hash}.ipfs.dweb.link`"
+          >
+            {{ item.hash }}
+          </v-btn>
+        </template>
       </v-data-table>
     </div>
   </div>
