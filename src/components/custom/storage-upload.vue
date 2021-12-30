@@ -53,6 +53,9 @@
         </div>
 
         <div class="mt-5 ta-c">
+          <div class="mb-3 gray fz-14" v-if="uploading">
+            {{ sucNum }}/ {{ files.length }} uploaded
+          </div>
           <v-btn v-if="!uploading" outlined @click="onClear">{{
             files.length ? "Clear" : "Cancel"
           }}</v-btn>
@@ -93,6 +96,7 @@ export default {
       ],
       progress: 0,
       curIdx: 0,
+      sucNum: 0,
       uploading: false,
       isPause: false,
     };
@@ -151,7 +155,7 @@ export default {
       this.uploading = true;
       this.isPause = false;
       this.curIdx = 0;
-      let sucNum = 0;
+      this.sucNum = 0;
       const { Bucket, Prefix } = this.info;
       for (const file of this.files) {
         if (this.isPause) break;
@@ -174,20 +178,22 @@ export default {
             console.log(e);
           });
           await task.done();
-          sucNum += 1;
+          this.sucNum += 1;
         } catch (error) {
-          console.log("task", error);
+          if (error) console.log("task", error.message);
         }
         this.curIdx += 1;
       }
       this.$emit("uploaded");
-      if (sucNum) {
+      if (this.sucNum) {
         this.$toast(
-          `${sucNum} file${sucNum > 1 ? "s" : ""} uploaded successfully`
+          `${this.sucNum} file${
+            this.sucNum > 1 ? "s" : ""
+          } uploaded successfully`
         );
       }
       if (this.isPause) {
-        if (sucNum) this.files.splice(0, sucNum);
+        if (this.sucNum) this.files.splice(0, this.sucNum);
         return;
       }
       await this.$sleep(300);
