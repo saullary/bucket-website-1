@@ -95,7 +95,7 @@
             <v-icon v-if="!item.isFile" size="18" class="mr-2"
               >mdi-{{ inBucket ? "folder-multiple" : "folder" }}</v-icon
             >
-            <b>{{ item.name }}</b></v-btn
+            <b>{{ item.name.cutStr(10, 10) }}</b></v-btn
           >
         </template>
         <template v-slot:item.hash="{ item }">
@@ -181,6 +181,7 @@ export default {
           },
         });
         this.$router.push(this.path + name + "/");
+        this.$toast(`${name} created successfully`);
       } catch (error) {
         console.log(error);
       }

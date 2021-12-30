@@ -57,6 +57,7 @@ Vue.prototype.$utils = {
     const mb = Math.pow(1024, 2);
     let size;
     if (byte > mb) size = (byte / mb).toFixed(2) + " MB";
+    else if (byte < 1024) return byte + " B";
     else size = (byte / 1024).toFixed(2) + " KB";
     return size;
   },

@@ -185,10 +185,10 @@ export default {
         this.$toast(
           `${sucNum} file${sucNum > 1 ? "s" : ""} uploaded successfully`
         );
-        if (this.isPause) {
-          this.files.splice(0, sucNum);
-          return;
-        }
+      }
+      if (this.isPause) {
+        if (sucNum) this.files.splice(0, sucNum);
+        return;
       }
       await this.$sleep(300);
       this.showPop = false;
