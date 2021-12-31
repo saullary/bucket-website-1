@@ -58,6 +58,7 @@
           <v-skeleton-loader
             v-if="fileLoading"
             type="article"
+            max-width="500"
           ></v-skeleton-loader>
           <div v-else-if="!fileInfo">
             <span class="gray">Not Found</span>
@@ -164,6 +165,9 @@ export default {
         },
       ];
     },
+  },
+  mounted() {
+    this.getList();
   },
   methods: {
     async addFolder() {

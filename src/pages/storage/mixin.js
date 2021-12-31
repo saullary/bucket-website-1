@@ -107,6 +107,7 @@ export default {
       this.$alert(err.message);
     },
     getList() {
+      if (!this.s3) return;
       if (this.inBucket) {
         this.getBuckets();
       } else if (this.inFile) {
@@ -172,6 +173,9 @@ export default {
           };
         });
         // console.log(this.bucketList);
+        if (this.$route.query.new == "bucket") {
+          this.addBucket();
+        }
       });
     },
     delBucket(Bucket) {
