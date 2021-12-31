@@ -55,10 +55,12 @@
 
     <v-dialog v-model="showPop" max-width="520">
       <div class="pd-30">
-        <h2>Add Domain</h2>
+        <h3>Add Domain</h3>
         <v-window v-model="curStep">
           <v-window-item :value="0">
-            <div class="gray mt-2">Select a bucket to add your domain to</div>
+            <div class="gray mt-2 fz-14">
+              Select a bucket to add your domain to
+            </div>
             <div class="bd-1 mt-6">
               <div v-if="!bucketList">
                 <v-skeleton-loader type="article" />
@@ -106,7 +108,9 @@
           <v-window-item :value="1">
             <div class="mt-5">
               <p><b>Bucket</b>：{{ chooseBucket.name }}</p>
-              <p class="gray">Enter the domain that you would like to add:</p>
+              <p class="gray fz-14">
+                Enter the domain that you would like to add:
+              </p>
             </div>
             <div class="mt-5">
               <v-text-field

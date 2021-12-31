@@ -15,7 +15,11 @@ http.interceptors.request.use(
     let { accessTokenExpireAt, refreshToken } = JSON.parse(
       localStorage.authData || "{}"
     );
-    if (config.url != RefreshPath && Date.now() >= accessTokenExpireAt) {
+    if (
+      token &&
+      config.url != RefreshPath &&
+      Date.now() >= accessTokenExpireAt
+    ) {
       const { data } = await http.post(
         RefreshPath,
         {
