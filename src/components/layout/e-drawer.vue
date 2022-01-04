@@ -92,8 +92,8 @@ export default {
           icon: "file-multiple",
         },
         {
-          label: "Domain",
-          to: "/domain",
+          label: "Domains",
+          to: "/domains",
           icon: "wan",
         },
         {
