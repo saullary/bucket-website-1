@@ -83,6 +83,13 @@ new Vue({
       });
       window.s3 = Vue.prototype.$s3 = s3;
       console.log("s3", s3);
+      // window.ss3 = Vue.prototype.$ss3 = new AWS.S3({
+      //   endpoint: "https://s3gw.foreverland.xyz",
+      //   signatureVersion: "v2",
+      //   s3ForcePathStyle: true,
+      //   accessKeyId: accessKey,
+      //   secretAccessKey: secretKey,
+      // });
       this.$setState({
         userInfo: data,
         s3,

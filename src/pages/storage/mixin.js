@@ -122,7 +122,7 @@ export default {
       this.s3.getObject(this.pathInfo, (err, data) => {
         this.fileLoading = false;
         if (err) return this.onErr(err);
-        // console.log(data);
+        console.log(data);
         this.fileInfo = {
           size: data.ContentLength,
           type: data.ContentType,
