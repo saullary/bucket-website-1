@@ -173,6 +173,7 @@ export default {
   },
   mounted() {
     this.getList();
+    this.checkNew();
   },
   methods: {
     async addFolder() {

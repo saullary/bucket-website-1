@@ -34,7 +34,13 @@
         hide-default-footer
       >
         <template v-slot:item.domain="{ item }">
-          <v-btn :color="item.valid ? 'success' : 'error'" rounded text small>
+          <v-btn
+            :to="`/domain/${item.domain}`"
+            :color="item.valid ? 'success' : 'error'"
+            rounded
+            text
+            small
+          >
             <b>{{ item.domain }}</b></v-btn
           >
         </template>
@@ -126,9 +132,8 @@
         </v-window>
 
         <div class="ta-c mt-8">
-          <v-btn @click="showPop = false" small>Cancel</v-btn>
+          <v-btn @click="showPop = false">Cancel</v-btn>
           <v-btn
-            small
             color="primary"
             class="ml-6"
             v-if="curStep > 0"
@@ -157,7 +162,7 @@ export default {
       headers: [
         { text: "Domain", value: "domain" },
         { text: "Bucket", value: "bucketName" },
-        { text: "Nameserver", value: "nameServers" },
+        { text: "NameServer", value: "nameServers" },
         { text: "CreateAt", value: "createAt" },
       ],
       list: [],
@@ -178,6 +183,11 @@ export default {
       if (val) {
         this.curStep = 0;
         this.getBuckets();
+      }
+    },
+    "$route.path"(val) {
+      if (val == "/domains") {
+        this.getList();
       }
     },
   },

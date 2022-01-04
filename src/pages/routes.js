@@ -1,6 +1,7 @@
 import Home from "./home";
 import Storage from "./storage";
 import Domains from "./domains";
+import Domain from "./domain";
 import Billing from "./billing";
 import Settings from "./settings";
 
@@ -17,11 +18,15 @@ export default [
     component: Storage,
   },
   {
-    path: "/domains",
+    path: "/domain",
     component: Domains,
     meta: {
       title: "Domains",
     },
+  },
+  {
+    path: "/domain/:name",
+    component: Domain,
   },
   {
     path: "/billing",

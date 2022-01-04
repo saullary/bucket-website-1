@@ -92,6 +92,7 @@ export default {
       this.selected = [];
       this.folderList = [];
       this.getList();
+      this.checkNew();
     },
     s3() {
       this.getList();
@@ -103,6 +104,11 @@ export default {
     // },
   },
   methods: {
+    checkNew() {
+      if (this.$route.query.new == "bucket") {
+        this.addBucket();
+      }
+    },
     onErr(err) {
       this.$alert(err.message);
     },
@@ -174,9 +180,6 @@ export default {
           };
         });
         // console.log(this.bucketList);
-        if (this.$route.query.new == "bucket") {
-          this.addBucket();
-        }
       });
     },
     delBucket(Bucket) {

@@ -93,7 +93,7 @@ export default {
         },
         {
           label: "Domains",
-          to: "/domains",
+          to: "/domain",
           icon: "wan",
         },
         {
