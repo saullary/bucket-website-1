@@ -14,13 +14,13 @@
     ></storage-upload>
 
     <div>
-      <template v-if="inBucket">
+      <div v-show="inBucket">
         <v-btn color="primary" @click="addBucket">
           <v-icon size="15">mdi-folder-multiple-plus</v-icon>
           <span class="ml-1">New Bucket</span>
         </v-btn>
-      </template>
-      <template v-else-if="inFile">
+      </div>
+      <div v-show="inFile">
         <v-btn
           color="primary"
           :href="fileUrl"
@@ -40,8 +40,8 @@
           <v-icon size="15">mdi-content-copy</v-icon>
           <span class="ml-1">Copy Path</span>
         </v-btn>
-      </template>
-      <template v-else>
+      </div>
+      <div v-show="inFolder">
         <v-btn color="primary" @click="$refs.upload.showPop = true">
           <v-icon size="15">mdi-cloud-upload</v-icon>
           <span class="ml-1">Upload</span>
@@ -50,7 +50,8 @@
           <v-icon size="15">mdi-folder-plus-outline</v-icon>
           <span class="ml-1">New Folder</span>
         </v-btn>
-      </template>
+      </div>
+
       <v-btn
         @click="onDelete"
         :loading="deleting"
@@ -210,8 +211,27 @@ export default {
         },
       ];
     },
+    fileDomain() {
+      if (!this.inFile) return "";
+      const { Bucket } = this.pathInfo;
+      const list = (this.domainsMap[Bucket] || []).filter((it) => it.valid);
+      if (list.length) return list[0].name;
+      const item = this.domainList.filter((it) => it.bucketName == Bucket)[0];
+      if (item) return item.domain;
+      return "";
+    },
     fileUrl() {
-      if (!this.fileInfo) return "";
+      if (!this.fileInfo || !this.inFile) return "";
+      const { Key } = this.pathInfo;
+      if (this.fileDomain) {
+        return (
+          (this.$inDev ? "http:" : "https:") +
+          "//" +
+          this.fileDomain +
+          "/" +
+          Key
+        );
+      }
       return this.fileInfo.url;
     },
   },
