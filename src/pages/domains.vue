@@ -176,6 +176,7 @@ export default {
       domain: "",
       deleting: false,
       keyword: "",
+      selectBucket: null,
     };
   },
   watch: {
@@ -188,13 +189,24 @@ export default {
     "$route.path"(val) {
       if (val == "/domain") {
         this.getList();
+        this.checkNew();
       }
     },
   },
   mounted() {
     this.getList();
+    this.checkNew();
   },
   methods: {
+    checkNew() {
+      const { bucket } = this.$route.query;
+      if (bucket && this.s3) {
+        this.selectBucket = bucket;
+        setTimeout(() => {
+          this.showPop = true;
+        }, 100);
+      }
+    },
     async onDelete() {
       try {
         const suffix = this.selected.length > 1 ? "s" : "";
@@ -228,6 +240,13 @@ export default {
             createAt: it.CreationDate.format(),
           };
         });
+        if (this.selectBucket) {
+          const item = this.bucketList.filter(
+            (it) => it.name == this.selectBucket
+          )[0];
+          if (item) this.onSelect(item);
+          this.selectBucket = null;
+        }
       });
     },
     onSelect(it) {

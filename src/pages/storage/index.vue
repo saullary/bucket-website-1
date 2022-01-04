@@ -119,13 +119,18 @@
           <div v-if="item.domainInfo">
             <span>{{ item.domainInfo.domain }}</span>
 
-            <e-menu
-              v-if="item.domainInfo.count > 1"
-              offset-y
-              @input="onDomain(item.name, $event)"
-            >
-              <v-btn slot="ref" color="primary" text small>
-                +{{ item.domainInfo.count - 1 }}
+            <e-menu open-on-hover offset-y @input="onDomain(item.name, $event)">
+              <v-btn
+                slot="ref"
+                color="primary"
+                text
+                small
+                :to="`/domain?bucket=${item.name}`"
+              >
+                <v-icon size="14">mdi-plus</v-icon>
+                <span v-if="item.domainInfo.count > 1">
+                  {{ item.domainInfo.count - 1 }}
+                </span>
               </v-btn>
               <v-list dense>
                 <v-list-item
@@ -135,6 +140,9 @@
                   :key="j"
                 >
                   <v-list-item-title>
+                    <v-icon v-if="row.icon" class="mr-1" size="16">{{
+                      row.icon
+                    }}</v-icon>
                     <span :class="row.valid ? 'color-suc' : ''">{{
                       row.name
                     }}</span>

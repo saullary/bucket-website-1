@@ -66,11 +66,23 @@ export default {
           it.domainInfo = this.domainList.filter(
             (d) => d.bucketName == it.name
           )[0];
-          it.domains = this.domainsMap[it.name] || [
-            {
-              name: "Loading",
-            },
-          ];
+          if (it.domainInfo) {
+            it.domains = [
+              {
+                name: "Loading",
+              },
+            ];
+            if (this.domainsMap[it.name]) {
+              it.domains = [
+                ...this.domainsMap[it.name],
+                {
+                  icon: "mdi-plus",
+                  name: "Add domain",
+                  to: "/domain?bucket=" + it.name,
+                },
+              ];
+            }
+          }
           return it;
         });
       } else if (this.inFolder) list = this.folderList;
