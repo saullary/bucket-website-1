@@ -166,17 +166,20 @@ export default {
     },
     async onRemove() {
       try {
-        let html = this.domain + " will be removed";
+        const domain = this.domain;
+        let html = domain + " will be removed";
         if (this.info.success) {
-          html = `<div class="fz-15">${this.domain} will no longer be a domain of your bucket.</div>`;
+          html = `<div class="fz-15">${domain} will no longer be a domain of your bucket.</div>`;
         }
         await this.$confirm(html, "Remove Domain", {
           confirmText: "Remove",
         });
         this.deleting = true;
-        await this.$http.delete("/domains/" + this.domain);
-        await this.getInfo();
-        this.$toast("Removed successfully");
+        await this.$http.delete("/domains/" + domain);
+        // await this.getInfo();
+        this.$router.push("/domain");
+        await this.$sleep(200);
+        this.$toast(domain + " Removed successfully");
       } catch (error) {
         //
       }

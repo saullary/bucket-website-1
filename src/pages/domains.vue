@@ -186,7 +186,7 @@ export default {
       }
     },
     "$route.path"(val) {
-      if (val == "/domains") {
+      if (val == "/domain") {
         this.getList();
       }
     },

@@ -7,6 +7,7 @@ export default {
     return {
       tableLoading: false,
       bucketList: [],
+      domainList: JSON.parse(localStorage.domainList || "[]"),
       folderList: [],
       selected: [],
       deleting: false,
@@ -60,8 +61,19 @@ export default {
     },
     list() {
       let list = [];
-      if (this.inBucket) list = this.bucketList;
-      else if (this.inFolder) list = this.folderList;
+      if (this.inBucket) {
+        list = this.bucketList.map((it) => {
+          it.domainInfo = this.domainList.filter(
+            (d) => d.bucketName == it.name
+          )[0];
+          it.domains = this.domainsMap[it.name] || [
+            {
+              name: "Loading",
+            },
+          ];
+          return it;
+        });
+      } else if (this.inFolder) list = this.folderList;
       if (this.searchKey) {
         list = list.filter((it) => {
           return new RegExp(this.searchKey).test(it.name);
@@ -85,23 +97,6 @@ export default {
         Delimiter: "/",
       };
     },
-  },
-  watch: {
-    path() {
-      if (!this.inStorage) return;
-      this.selected = [];
-      this.folderList = [];
-      this.getList();
-      this.checkNew();
-    },
-    s3() {
-      this.getList();
-    },
-    // async bucketList(val) {
-    //   if (!val.length) return;
-    //   const { data } = await this.$http.get("/domains/stat");
-    //   console.log(data);
-    // },
   },
   methods: {
     checkNew() {

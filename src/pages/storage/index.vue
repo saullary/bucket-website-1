@@ -13,7 +13,7 @@
       @uploaded="getList"
     ></storage-upload>
 
-    <e-hcon>
+    <div>
       <template v-if="inBucket">
         <v-btn color="primary" @click="addBucket">
           <v-icon size="15">mdi-folder-multiple-plus</v-icon>
@@ -23,12 +23,22 @@
       <template v-else-if="inFile">
         <v-btn
           color="primary"
-          :href="fileInfo ? fileInfo.url : ''"
+          :href="fileUrl"
           target="_blank"
-          :disabled="!fileInfo"
+          :loading="!fileInfo"
+          :download="fileName"
         >
           <v-icon size="15">mdi-cloud-download</v-icon>
           <span class="ml-1">Download</span>
+        </v-btn>
+        <v-btn
+          class="ml-5"
+          outlined
+          v-clipboard="fileUrl"
+          @success="$toast('Copied to clipboard !')"
+        >
+          <v-icon size="15">mdi-content-copy</v-icon>
+          <span class="ml-1">Copy Path</span>
         </v-btn>
       </template>
       <template v-else>
@@ -50,7 +60,7 @@
       >
         <v-icon>mdi-trash-can-outline</v-icon>
       </v-btn>
-    </e-hcon>
+    </div>
 
     <v-breadcrumbs :items="navItems" class="pl-0 mt-3"></v-breadcrumbs>
 
@@ -104,6 +114,35 @@
             <b>{{ item.name.cutStr(10, 10) }}</b></v-btn
           >
         </template>
+        <template v-slot:item.domain="{ item }">
+          <div v-if="item.domainInfo">
+            <span>{{ item.domainInfo.domain }}</span>
+
+            <e-menu
+              v-if="item.domainInfo.count > 1"
+              offset-y
+              @input="onDomain(item.name, $event)"
+            >
+              <v-btn slot="ref" color="primary" text small>
+                +{{ item.domainInfo.count - 1 }}
+              </v-btn>
+              <v-list dense>
+                <v-list-item
+                  link
+                  :to="row.to"
+                  v-for="(row, j) in item.domains"
+                  :key="j"
+                >
+                  <v-list-item-title>
+                    <span :class="row.valid ? 'color-suc' : ''">{{
+                      row.name
+                    }}</span>
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </e-menu>
+          </div>
+        </template>
         <template v-slot:item.hash="{ item }">
           <v-btn
             rounded
@@ -131,6 +170,7 @@ export default {
       popUpload: false,
       fileLoading: false,
       fileInfo: null,
+      domainsMap: {},
     };
   },
   computed: {
@@ -170,12 +210,58 @@ export default {
         },
       ];
     },
+    fileUrl() {
+      if (!this.fileInfo) return "";
+      return this.fileInfo.url;
+    },
+  },
+  watch: {
+    path() {
+      if (!this.inStorage) return;
+      this.selected = [];
+      this.folderList = [];
+      this.getList();
+      this.checkNew();
+    },
+    s3() {
+      this.getList();
+    },
+    async bucketList(val) {
+      if (!val.length) return;
+      const { data } = await this.$http.get("/domains/stat");
+      console.log(data);
+      this.domainList = data.stats;
+      localStorage.domainList = JSON.stringify(this.domainList);
+    },
   },
   mounted() {
     this.getList();
     this.checkNew();
   },
   methods: {
+    async onDomain(bucketName, isOpen) {
+      if (!isOpen || this.loadingDomains) return;
+      try {
+        this.loadingDomains = true;
+        const { data } = await this.$http.get("/domains", {
+          params: { bucketName },
+        });
+        this.$set(
+          this.domainsMap,
+          bucketName,
+          data.list.map((it) => {
+            return {
+              name: it.domain,
+              valid: it.valid,
+              to: "/domain/" + it.domain,
+            };
+          })
+        );
+      } catch (error) {
+        //
+      }
+      this.loadingDomains = false;
+    },
     async addFolder() {
       try {
         const { value: name } = await this.$prompt("", "New Folder", {
