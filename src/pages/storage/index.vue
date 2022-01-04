@@ -21,7 +21,12 @@
         </v-btn>
       </template>
       <template v-else-if="inFile">
-        <v-btn color="primary">
+        <v-btn
+          color="primary"
+          :href="fileInfo ? fileInfo.url : ''"
+          target="_blank"
+          :disabled="!fileInfo"
+        >
           <v-icon size="15">mdi-cloud-download</v-icon>
           <span class="ml-1">Download</span>
         </v-btn>

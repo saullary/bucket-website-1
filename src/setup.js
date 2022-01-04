@@ -1,7 +1,6 @@
 import Vue from "vue";
 import "./css/style.scss";
 import "./components";
-import "./api";
 import VueClipboards from "vue-clipboards";
 import router from "./router";
 

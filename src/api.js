@@ -2,8 +2,12 @@ import Vue from "vue";
 import Axios from "axios";
 // import router from "./router";
 
+const baseURL = process.env.VUE_APP_BASE_URL;
+export const endpoint = (Vue.prototype.$endpoint =
+  "https://s3gw.foreverland.xyz");
+
 const http = Axios.create({
-  baseURL: process.env.VUE_APP_BASE_URL,
+  baseURL,
 });
 
 const authApi = "https://auth.foreverland.xyz";

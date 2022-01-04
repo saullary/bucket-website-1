@@ -111,24 +111,25 @@ export default {
       if (this.inBucket) {
         this.getBuckets();
       } else if (this.inFile) {
-        this.getObject();
+        this.headObject();
       } else if (this.inFolder) {
         this.getObjects();
       }
     },
-    getObject() {
+    headObject() {
       this.fileLoading = true;
       this.fileInfo = null;
-      this.s3.getObject(this.pathInfo, (err, data) => {
+      this.s3.headObject(this.pathInfo, (err, data) => {
         this.fileLoading = false;
         if (err) return this.onErr(err);
-        console.log(data);
         this.fileInfo = {
           size: data.ContentLength,
           type: data.ContentType,
-          hash: data.ETag || "Unknown",
+          hash: (data.ETag || "").replace(/"/g, ""),
           updateAt: data.LastModified,
+          url: this.$endpoint + this.path.replace(BasePath, "/"),
         };
+        console.log(this.fileInfo);
       });
     },
     getObjects() {

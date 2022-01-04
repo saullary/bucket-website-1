@@ -5,6 +5,7 @@ import store from "./store";
 import { mapState } from "vuex";
 import vuetify from "./plugins/vuetify";
 import "./setup";
+import { endpoint } from "./api";
 // import AWS from "aws-sdk";
 import { S3 } from "@aws-sdk/client-s3";
 Vue.config.productionTip = false;
@@ -72,7 +73,7 @@ new Vue({
       // const credentials = new AWS.Credentials({
       // });
       const s3 = new S3({
-        endpoint: "https://s3gw.foreverland.xyz",
+        endpoint,
         signatureVersion: "v2",
         s3ForcePathStyle: true,
         credentials: {
@@ -84,7 +85,7 @@ new Vue({
       window.s3 = Vue.prototype.$s3 = s3;
       console.log("s3", s3);
       // window.ss3 = Vue.prototype.$ss3 = new AWS.S3({
-      //   endpoint: "https://s3gw.foreverland.xyz",
+      //   endpoint,
       //   signatureVersion: "v2",
       //   s3ForcePathStyle: true,
       //   accessKeyId: accessKey,
