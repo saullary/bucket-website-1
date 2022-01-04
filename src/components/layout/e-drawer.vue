@@ -68,12 +68,14 @@
 import { mapState } from "vuex";
 
 const initFilePath = "/storage/";
+const initDomainPath = "/domain";
 
 export default {
   data() {
     return {
       drawer: null,
       filesPath: initFilePath,
+      domainPath: initDomainPath,
     };
   },
   computed: {
@@ -93,7 +95,9 @@ export default {
         },
         {
           label: "Domains",
-          to: "/domain",
+          to: this.path.includes(initDomainPath)
+            ? initDomainPath
+            : this.domainPath,
           icon: "wan",
         },
         {
@@ -123,6 +127,8 @@ export default {
     path(val) {
       if (val.includes(initFilePath)) {
         this.filesPath = val;
+      } else if (val.includes(initDomainPath)) {
+        this.domainPath = val;
       }
     },
   },
