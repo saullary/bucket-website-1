@@ -13,7 +13,7 @@
       @uploaded="getList"
     ></storage-upload>
 
-    <div>
+    <div class="d-flex">
       <div v-show="inBucket">
         <v-btn color="primary" @click="addBucket">
           <v-icon size="15">mdi-folder-multiple-plus</v-icon>
@@ -80,7 +80,11 @@
             <span class="gray">Not Found</span>
           </div>
           <ul class="ls-none" v-else>
-            <li class="mt-3" v-for="(it, i) in fileInfoList" :key="i">
+            <li
+              class="mt-3 mb-2 fz-14"
+              v-for="(it, i) in fileInfoList"
+              :key="i"
+            >
               <span class="d-ib" style="min-width: 130px">{{ it.label }}:</span>
               <span class="gray">{{ it.value }}</span>
             </li>

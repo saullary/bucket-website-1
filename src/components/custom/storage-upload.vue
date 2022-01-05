@@ -6,7 +6,7 @@
       eager
       :persistent="files.length > 0"
     >
-      <e-dialog-close @click="showPop = false" />
+      <e-dialog-close @click="showPop = false" v-show="!uploading" />
       <div class="pd-20">
         <div class="d-flex al-end">
           <h3>Upload</h3>
@@ -108,7 +108,7 @@ export default {
     list() {
       return this.files.map((it, index) => {
         return {
-          name: it.name,
+          name: (it.name || "").cutStr(10, 10),
           size: this.$utils.getFileSize(it.size),
           index,
         };
