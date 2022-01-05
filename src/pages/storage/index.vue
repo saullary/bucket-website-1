@@ -119,13 +119,17 @@
           <div v-if="item.domainInfo">
             <span>{{ item.domainInfo.domain }}</span>
 
-            <e-menu open-on-hover offset-y @input="onDomain(item.name, $event)">
+            <e-menu
+              :open-on-hover="!asMobile"
+              offset-y
+              @input="onDomain(item.name, $event)"
+            >
               <v-btn
                 slot="ref"
                 color="primary"
                 text
                 small
-                :to="`/domain?bucket=${item.name}`"
+                :to="asMobile ? null : `/domain?bucket=${item.name}`"
               >
                 <v-icon size="14">mdi-plus</v-icon>
                 <span v-if="item.domainInfo.count > 1">
@@ -183,6 +187,9 @@ export default {
     };
   },
   computed: {
+    asMobile() {
+      return this.$vuetify.breakpoint.smAndDown;
+    },
     headers() {
       if (this.inBucket)
         return [
