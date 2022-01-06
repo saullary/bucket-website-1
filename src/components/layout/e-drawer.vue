@@ -39,15 +39,15 @@
     </div>
 
     <div class="pos-btm">
-      <e-menu offset-x open-on-hover>
-        <span slot="ref" class="d-flex al-c pa-2 ml-4 mb-4">
+      <e-menu offset-x>
+        <v-btn slot="ref" text block x-large>
           <v-avatar color="indigo" size="30">
             <v-img :src="userInfo.avatar" v-if="userInfo.avatar"></v-img>
             <v-icon dark v-else> mdi-account </v-icon>
           </v-avatar>
           <span class="ml-3 gray-3">{{ userInfo.username || "Unknown" }}</span>
           <v-icon class="ml-auto" color="#aaa">mdi-chevron-right</v-icon>
-        </span>
+        </v-btn>
         <v-list dense>
           <v-list-item link to="/apikey">
             <span>Settings</span>
