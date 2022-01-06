@@ -81,12 +81,45 @@
           </div>
           <ul class="ls-none" v-else>
             <li
-              class="mt-3 mb-2 fz-14"
+              class="mt-2 mb-2 fz-14 d-flex"
               v-for="(it, i) in fileInfoList"
               :key="i"
             >
-              <span class="d-ib" style="min-width: 130px">{{ it.label }}:</span>
-              <span class="gray">{{ it.value }}</span>
+              <span class="d-ib pa-1" style="min-width: 130px"
+                >{{ it.label }}:</span
+              >
+              <div v-if="it.name == 'ipfs'">
+                <v-btn
+                  rounded
+                  text
+                  small
+                  target="_blank"
+                  :href="`https://${it.value}.ipfs.dweb.link`"
+                >
+                  {{ it.value }}
+                </v-btn>
+                <v-btn icon small v-clipboard="it.value" @success="onCopied">
+                  <v-icon size="15" class="ml-auto">mdi-content-copy</v-icon>
+                </v-btn>
+              </div>
+              <div v-else-if="it.name == 'url'">
+                <p v-for="(link, j) in it.value" :key="j">
+                  <v-btn
+                    rounded
+                    text
+                    small
+                    color="primary"
+                    :href="link"
+                    target="_blank"
+                  >
+                    {{ link }}
+                  </v-btn>
+                  <v-btn icon small v-clipboard="link" @success="onCopied">
+                    <v-icon size="15" class="ml-auto">mdi-content-copy</v-icon>
+                  </v-btn>
+                </p>
+              </div>
+              <span v-else class="gray pa-1 ml-2">{{ it.value }}</span>
             </li>
           </ul>
         </div>
@@ -226,32 +259,33 @@ export default {
         },
         {
           label: "IPFS Hash",
+          name: "ipfs",
           value: info.hash,
+        },
+        {
+          label: "Object URL",
+          name: "url",
+          value: this.fileUrls,
         },
       ];
     },
-    fileDomain() {
-      if (!this.inFile) return "";
+    fileUrls() {
+      if (!this.fileInfo || !this.inFile) return [];
       const { Bucket } = this.pathInfo;
-      const list = (this.domainsMap[Bucket] || []).filter((it) => it.valid);
-      if (list.length) return list[0].name;
+      let list = (this.domainsMap[Bucket] || [])
+        .filter((it) => it.valid)
+        .map((it) => it.name);
       const item = this.domainList.filter((it) => it.bucketName == Bucket)[0];
-      if (item) return item.domain;
-      return "";
+      if (item) list.push(item.domain);
+      const { Key } = this.pathInfo;
+      list = list.map((domain) => {
+        return (this.$inDev ? "http:" : "https:") + "//" + domain + "/" + Key;
+      });
+      if (!list.length) list.push(this.fileInfo.url);
+      return list;
     },
     fileUrl() {
-      if (!this.fileInfo || !this.inFile) return "";
-      const { Key } = this.pathInfo;
-      if (this.fileDomain) {
-        return (
-          (this.$inDev ? "http:" : "https:") +
-          "//" +
-          this.fileDomain +
-          "/" +
-          Key
-        );
-      }
-      return this.fileInfo.url;
+      return this.fileUrls[0] || "";
     },
   },
   watch: {
@@ -278,6 +312,9 @@ export default {
     this.checkNew();
   },
   methods: {
+    onCopied() {
+      this.$toast("Copied to clipboard !");
+    },
     async onDomain(bucketName, isOpen) {
       if (!isOpen || this.loadingDomains) return;
       try {
