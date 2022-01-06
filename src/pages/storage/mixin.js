@@ -280,16 +280,23 @@ export default {
     },
     async getSubObjects(folder) {
       const { Bucket, Prefix } = this.pathInfo;
+      const folderKey = Prefix + folder + "/";
       const params = {
         Bucket,
-        Prefix: Prefix + folder + "/",
+        Prefix: folderKey,
       };
       return new Promise((resolve, reject) => {
         this.$loading();
         this.s3.listObjectsV2(params, (err, data) => {
           this.$loading.close();
           if (err) reject(err);
-          else resolve(data.Contents || []);
+          else
+            resolve([
+              {
+                Key: folderKey,
+              },
+              ...(data.Contents || []),
+            ]);
         });
       });
     },

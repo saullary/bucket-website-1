@@ -315,11 +315,32 @@ export default {
             required: true,
           },
         });
-        this.$router.push(this.path + name + "/");
+        // this.$router.push(this.path + name + "/");
+        const { Prefix } = this.pathInfo;
+        this.tableLoading = true;
+        await this.putObject(Prefix + name + "/");
         this.$toast(`${name} created successfully`);
+        await this.getList();
       } catch (error) {
         console.log(error);
+        if (error) this.$alert(error.message);
       }
+      this.tableLoading = false;
+    },
+    async putObject(Key) {
+      const { Bucket } = this.pathInfo;
+      return new Promise((resolve, reject) => {
+        this.s3.putObject(
+          {
+            Bucket,
+            Key,
+          },
+          (err, data) => {
+            if (err) reject(err);
+            else resolve(data);
+          }
+        );
+      });
     },
     async addBucket() {
       try {
@@ -329,7 +350,7 @@ export default {
             label: "Bucket Name",
             // placeholder: "",
             counter: true,
-            maxlength: 60,
+            maxlength: 48,
             trim: true,
             rules: [
               (v) => !!v || "Invalid Name",
