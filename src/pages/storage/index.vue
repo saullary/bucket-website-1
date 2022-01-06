@@ -206,6 +206,10 @@
           </v-btn>
         </template>
       </v-data-table>
+
+      <div class="ta-c mt-6" v-if="!list.length">
+        <img src="img/empty1.svg" width="80" />
+      </div>
     </div>
   </div>
 </template>
