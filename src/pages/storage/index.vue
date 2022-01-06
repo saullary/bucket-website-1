@@ -40,6 +40,16 @@
           <v-icon size="15">mdi-content-copy</v-icon>
           <span class="ml-1">Copy Path</span>
         </v-btn>
+        <e-menu offset-y open-on-hover>
+          <v-btn slot="ref" class="ml-5" icon>
+            <v-icon>mdi-dots-vertical</v-icon>
+          </v-btn>
+          <v-list dense>
+            <v-list-item link @click="onDelFile">
+              <span class="red-1">Delete</span>
+            </v-list-item>
+          </v-list>
+        </e-menu>
       </div>
       <div v-show="inFolder">
         <v-btn color="primary" @click="$refs.upload.showPop = true">
@@ -280,7 +290,7 @@ export default {
         .filter((it) => it.valid)
         .map((it) => it.name);
       const item = this.domainList.filter((it) => it.bucketName == Bucket)[0];
-      if (item) list.push(item.domain);
+      if (item && !list.includes(item.domain)) list.push(item.domain);
       const { Key } = this.pathInfo;
       list = list.map((domain) => {
         return (this.$inDev ? "http:" : "https:") + "//" + domain + "/" + Key;

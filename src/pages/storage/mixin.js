@@ -202,6 +202,26 @@ export default {
         );
       });
     },
+    async onDelFile() {
+      try {
+        await this.$confirm(
+          "This file will be permanently deleted. Are you sure you want to continue"
+        );
+        const { Key } = this.pathInfo;
+        this.$loading();
+        await this.delObjects([
+          {
+            Key,
+          },
+        ]);
+        const navItem = this.navItems[this.navItems.length - 2];
+        this.$router.replace(navItem.to);
+        this.$toast("Deleted successfully");
+      } catch (error) {
+        //
+      }
+      this.$loading.close();
+    },
     delObjects(Objects) {
       const { Bucket } = this.pathInfo;
       const params = {
