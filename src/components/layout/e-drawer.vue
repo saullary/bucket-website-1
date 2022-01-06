@@ -16,20 +16,7 @@
       </a>
     </div>
     <div class="pa-8">
-      <div>
-        <v-icon color="#D1DCFC" size="16">mdi-cloud</v-icon>
-        <span class="gray fz-14 ml-2">Storage Capacity</span>
-      </div>
-      <v-progress-linear
-        rounded
-        height="6"
-        value="15"
-        class="mt-3"
-      ></v-progress-linear>
-      <div class="mt-3">
-        <b class="fz-18">20</b>
-        <span class="gray fz-14"> / 1024MB used</span>
-      </div>
+      <e-stor-usage></e-stor-usage>
     </div>
 
     <v-divider></v-divider>
@@ -52,14 +39,21 @@
     </div>
 
     <div class="pos-btm">
-      <a href="/" class="d-flex al-c pa-2 ml-4 mb-4 hover-1">
-        <v-avatar color="indigo" size="30">
-          <v-img :src="userInfo.avatar" v-if="userInfo.avatar"></v-img>
-          <v-icon dark v-else> mdi-account </v-icon>
-        </v-avatar>
-        <span class="ml-3 gray-3">{{ userInfo.username || "Unknown" }}</span>
-        <v-icon class="ml-auto" color="#aaa">mdi-chevron-right</v-icon>
-      </a>
+      <e-menu offset-x open-on-hover>
+        <span slot="ref" class="d-flex al-c pa-2 ml-4 mb-4">
+          <v-avatar color="indigo" size="30">
+            <v-img :src="userInfo.avatar" v-if="userInfo.avatar"></v-img>
+            <v-icon dark v-else> mdi-account </v-icon>
+          </v-avatar>
+          <span class="ml-3 gray-3">{{ userInfo.username || "Unknown" }}</span>
+          <v-icon class="ml-auto" color="#aaa">mdi-chevron-right</v-icon>
+        </span>
+        <v-list dense>
+          <v-list-item link @click="onLogout">
+            <span>Logout</span>
+          </v-list-item>
+        </v-list>
+      </e-menu>
     </div>
   </v-navigation-drawer>
 </template>
@@ -130,6 +124,12 @@ export default {
       } else if (val.includes(initDomainPath)) {
         this.domainPath = val;
       }
+    },
+  },
+  methods: {
+    onLogout() {
+      localStorage.clear();
+      location.href = "index.html";
     },
   },
 };

@@ -179,6 +179,7 @@ export default {
           });
           await task.done();
           this.sucNum += 1;
+          this.onUpdate();
         } catch (error) {
           if (error) console.log("task", error.message);
         }
@@ -191,6 +192,7 @@ export default {
             this.sucNum > 1 ? "s" : ""
           } uploaded successfully`
         );
+        this.onUpdate(8000);
       }
       if (this.isPause) {
         if (this.sucNum) this.files.splice(0, this.sucNum);
@@ -201,6 +203,14 @@ export default {
       await this.$sleep(300);
       this.uploading = false;
       this.files = [];
+    },
+    async onUpdate(delay = 2000) {
+      await this.$sleep(delay);
+      this.$setState({
+        noticeMsg: {
+          name: "updateUsage",
+        },
+      });
     },
   },
 };

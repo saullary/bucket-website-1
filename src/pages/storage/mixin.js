@@ -248,6 +248,15 @@ export default {
       this.selected = [];
       this.deleting = false;
       this.getList();
+      this.onUpdate();
+    },
+    async onUpdate(delay = 3000) {
+      await this.$sleep(delay);
+      this.$setState({
+        noticeMsg: {
+          name: "updateUsage",
+        },
+      });
     },
     async getSelectedObjects() {
       if (this.inBucket) return this.selected;
