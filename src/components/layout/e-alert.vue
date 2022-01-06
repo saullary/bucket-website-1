@@ -38,7 +38,7 @@
     >
       <v-card class="pd-10">
         <v-card-title v-if="!alertInfo.hideTitle">
-          <v-icon :color="iconColor" class="mr-2">
+          <v-icon v-show="!alertInfo.hideIcon" :color="iconColor" class="mr-2">
             {{ iconName }}
           </v-icon>
           {{

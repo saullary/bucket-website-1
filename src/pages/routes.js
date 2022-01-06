@@ -4,6 +4,7 @@ import Domains from "./domains";
 import Domain from "./domain";
 import Billing from "./billing";
 import Settings from "./settings";
+import Apikey from "./user/apikey";
 
 export default [
   {
@@ -40,6 +41,13 @@ export default [
     component: Settings,
     meta: {
       title: "Settings",
+    },
+  },
+  {
+    path: "/apikey",
+    component: Apikey,
+    meta: {
+      title: "API Key",
     },
   },
 ];

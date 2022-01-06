@@ -49,6 +49,9 @@
           <v-icon class="ml-auto" color="#aaa">mdi-chevron-right</v-icon>
         </span>
         <v-list dense>
+          <v-list-item link to="/apikey">
+            <span>Settings</span>
+          </v-list-item>
           <v-list-item link @click="onLogout">
             <span>Logout</span>
           </v-list-item>

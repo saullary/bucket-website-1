@@ -305,6 +305,7 @@ export default {
       try {
         const { value: name } = await this.$prompt("", "New Folder", {
           icon: "mdi-folder-plus",
+          hideIcon: true,
           inputAttrs: {
             label: "Folder Name",
             // placeholder: "",
@@ -346,6 +347,7 @@ export default {
       try {
         const { value: Bucket } = await this.$prompt("", "New Bucket", {
           icon: "mdi-folder-multiple-plus",
+          hideIcon: true,
           inputAttrs: {
             label: "Bucket Name",
             // placeholder: "",
