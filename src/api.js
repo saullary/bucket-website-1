@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Axios from "axios";
 // import router from "./router";
+import { setState } from "./store";
 
 const baseURL = process.env.VUE_APP_BASE_URL;
 export const endpoint = (Vue.prototype.$endpoint =
@@ -40,6 +41,9 @@ http.interceptors.request.use(
       );
       localStorage.authData = JSON.stringify(data);
       token = data.accessToken;
+      setState({
+        token,
+      });
     }
     const params = (config.params = config.params || {});
     if (params._auth && !/^http/.test(config.url)) {

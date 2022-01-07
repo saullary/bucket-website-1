@@ -69,7 +69,14 @@ new Vue({
     async getUesrInfo() {
       const { data } = await this.$http.get("/user");
       localStorage.userInfo = JSON.stringify(data);
-      const { accessKey, secretKey } = data;
+      this.$setState({
+        userInfo: data,
+      });
+      this.initS3();
+    },
+    async initS3() {
+      const { data } = await this.$http.get("/user/sts/assume-role");
+      const { accessKey, secretKey, sessionToken } = data;
       // const credentials = new AWS.Credentials({
       // });
       const s3 = new S3({
@@ -79,6 +86,7 @@ new Vue({
         credentials: {
           accessKeyId: accessKey,
           secretAccessKey: secretKey,
+          sessionToken,
         },
         region: "eu-west-2",
       });
@@ -92,7 +100,6 @@ new Vue({
       //   secretAccessKey: secretKey,
       // });
       this.$setState({
-        userInfo: data,
         s3,
       });
     },

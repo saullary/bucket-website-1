@@ -107,11 +107,11 @@ export default {
         //   to: "/settings",
         //   icon: "cog-outline",
         // },
-        {
-          label: "Docs",
-          href: "https://bucket-docs.4everland.org",
-          icon: "file-document-outline",
-        },
+        // {
+        //   label: "Docs",
+        //   href: "https://bucket-docs.4everland.org",
+        //   icon: "file-document-outline",
+        // },
       ];
     },
   },
