@@ -1,12 +1,18 @@
 <template>
   <div class="ta-c mt-15">
-    <div class="mb-8">
-      <img src="img/logo.svg" height="26" />
+    <div class="mb-8 pos-r">
+      <img
+        src="img/bg/login1.png"
+        class="w100p"
+        style="max-width: 600px; min-height: 200px"
+      />
+      <div class="x-center" style="bottom: 30%">
+        <v-btn color="primary" large :loading="loading" @click="onLogin">
+          <v-icon color="white">mdi-github</v-icon>
+          <span class="ml-1">Continue With Github</span>
+        </v-btn>
+      </div>
     </div>
-    <v-btn color="primary" large :loading="loading" @click="onLogin">
-      <v-icon color="white">mdi-github</v-icon>
-      <span class="ml-1">Connect To Github</span>
-    </v-btn>
   </div>
 </template>
 
