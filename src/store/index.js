@@ -36,6 +36,11 @@ const store = new Vuex.Store({
 export const setState = (Vue.prototype.$setState = (data) => {
   store.commit(SET_DATA, data);
 });
+Vue.prototype.$setMsg = (noticeMsg) => {
+  setState({
+    noticeMsg,
+  });
+};
 
 function getWH() {
   const { clientWidth, clientHeight } = document.documentElement;

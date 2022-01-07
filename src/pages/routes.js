@@ -11,7 +11,7 @@ export default [
     path: "/",
     component: Home,
     meta: {
-      noLogin: true,
+      // noLogin: true,
     },
   },
   {

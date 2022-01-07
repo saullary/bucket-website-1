@@ -38,7 +38,7 @@
       </div>
     </div>
 
-    <div class="pos-btm">
+    <div class="pos-btm" v-if="token">
       <e-menu offset-x>
         <v-btn slot="ref" text block x-large>
           <v-avatar color="indigo" size="30">
@@ -79,6 +79,7 @@ export default {
     ...mapState({
       noticeMsg: (s) => s.noticeMsg,
       userInfo: (s) => s.userInfo,
+      token: (s) => s.token,
     }),
     path() {
       return this.$route.path;
@@ -121,9 +122,14 @@ export default {
         this.drawer = true;
       }
     },
-    path(val) {
+    path(val, oldVal) {
       if (val.includes(initFilePath)) {
         this.filesPath = val;
+        if (!oldVal.includes(initFilePath)) {
+          this.$setMsg({
+            name: "updateUsage",
+          });
+        }
       } else if (val.includes(initDomainPath)) {
         this.domainPath = val;
       }

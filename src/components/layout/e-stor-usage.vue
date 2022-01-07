@@ -11,7 +11,7 @@
       class="mt-3"
     ></v-progress-linear>
     <div class="mt-3">
-      <b class="fz-18">{{ info.usedStorage || "*" }}</b>
+      <b class="fz-18">{{ info.usedStorage || "0" }}</b>
       <span class="gray fz-14"> / 1024MB used</span>
     </div>
   </div>
@@ -25,6 +25,7 @@ export default {
     ...mapState({
       info: (s) => s.usageInfo,
       noticeMsg: (s) => s.noticeMsg,
+      token: (s) => s.token,
     }),
     usagePerc() {
       const { usedStorage, totalStorage } = this.info;
@@ -40,7 +41,9 @@ export default {
     },
   },
   created() {
-    this.getInfo();
+    if (this.token) {
+      this.getInfo();
+    }
   },
   methods: {
     async getInfo() {
