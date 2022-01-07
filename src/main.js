@@ -75,10 +75,13 @@ new Vue({
       this.initS3();
     },
     async initS3() {
-      const { data } = await this.$http.get("/user/sts/assume-role");
-      const { accessKey, secretKey, sessionToken } = data;
-      // const credentials = new AWS.Credentials({
-      // });
+      let stsData = JSON.parse(localStorage.stsData || "null");
+      if (!stsData || Date.now() >= (stsData.expiredAt - 3600) * 1000) {
+        const { data } = await this.$http.get("/user/sts/assume-role");
+        stsData = data;
+        localStorage.stsData = JSON.stringify(data);
+      }
+      const { accessKey, secretKey, sessionToken } = stsData;
       const s3 = new S3({
         endpoint,
         signatureVersion: "v2",
