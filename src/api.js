@@ -3,15 +3,24 @@ import Axios from "axios";
 // import router from "./router";
 import { setState } from "./store";
 
+const inDev = /xyz/.test(process.env.VUE_APP_BASE_URL);
+Vue.prototype.$inDev = inDev;
+
 const baseURL = process.env.VUE_APP_BASE_URL;
-export const endpoint = (Vue.prototype.$endpoint =
-  "https://s3gw.foreverland.xyz");
+
+export const endpoint = inDev
+  ? "https://s3gw.foreverland.xyz"
+  : "https://endpoint.4everland.co";
+const authApi = inDev
+  ? "https://auth.foreverland.xyz"
+  : "https://oauth.4everland.org";
+
+Vue.prototype.$endpoint = endpoint;
 
 const http = Axios.create({
   baseURL,
 });
 
-const authApi = "https://auth.foreverland.xyz";
 const RefreshPath = "/refresh";
 
 http.interceptors.request.use(
