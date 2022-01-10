@@ -375,8 +375,9 @@ export default {
         const { Prefix } = this.pathInfo;
         this.tableLoading = true;
         await this.putObject(Prefix + name + "/");
-        this.$toast(`${name} created successfully`);
         await this.getList();
+        await this.$sleep(200);
+        this.$toast(`${name} created successfully`);
       } catch (error) {
         console.log(error);
         if (error) this.$alert(error.message);
