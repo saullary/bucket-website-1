@@ -5,6 +5,7 @@ const BasePath = "/storage/";
 export default {
   data() {
     return {
+      BasePath,
       tableLoading: false,
       bucketList: [],
       domainList: JSON.parse(localStorage.domainList || "[]"),
@@ -144,6 +145,7 @@ export default {
         };
         console.log(this.fileInfo);
       });
+      this.onDomain(this.pathInfo.Bucket, true);
     },
     getObjects() {
       this.tableLoading = true;
