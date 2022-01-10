@@ -272,7 +272,7 @@ export default {
       this.getList();
       this.onUpdate();
     },
-    async onUpdate(delay = 3000) {
+    async onUpdate(delay = 1000) {
       await this.$sleep(delay);
       this.$setState({
         noticeMsg: {
