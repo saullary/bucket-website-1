@@ -265,10 +265,11 @@ export default {
           domain: this.domain,
           bucketName: this.chooseBucket.name,
         });
-        this.domain = "";
-        this.$toast("Added successfully");
         this.showPop = false;
-        this.getList();
+        // this.getList();
+        this.$router.push(`/domain/${this.domain}`);
+        this.$toast("Added successfully");
+        this.domain = "";
       } catch (error) {
         console.log(error);
       }
